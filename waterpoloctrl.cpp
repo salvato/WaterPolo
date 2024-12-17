@@ -203,7 +203,7 @@ WaterPoloCtrl::setWindowLayout() {
 QGridLayout*
 WaterPoloCtrl::CreateGamePanel() {
     auto* gamePanel = new QGridLayout();
-    // Team
+    // For each Team
     int iRow;
     for(int iTeam=0; iTeam<2; iTeam++) {
         // Matrice x righe e 8 colonne
