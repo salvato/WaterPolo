@@ -58,6 +58,8 @@ protected:
     void          GeneralSetup();
 
 private slots:
+    void onStart();
+    void onTimeUpdate();
     void closeEvent(QCloseEvent*);
     void onTimeOutIncrement(int iTeam);
     void onTimeOutDecrement(int iTeam);
@@ -65,7 +67,6 @@ private slots:
     void onSetDecrement(int iTeam);
     void onScoreIncrement(int iTeam);
     void onScoreDecrement(int iTeam);
-    void onServiceClicked(int iTeam);
     void onTeamTextChanged(QString sText, int iTeam);
     void onButtonChangeFieldClicked();
     void onButtonNewSetClicked();
@@ -86,8 +87,6 @@ private:
     int             iTimeout[2]{};
     int             iSet[2]{};
     int             iScore[2]{};
-    int             iServizio{};
-    int             lastService{};
     Edit*           pTeamName[2]{};
     Edit*           pTimeoutEdit[2]{};
     Edit*           pSetsEdit[2]{};
@@ -98,10 +97,8 @@ private:
     Button*         pSetsDecrement[2]{};
     Button*         pScoreIncrement[2]{};
     Button*         pScoreDecrement[2]{};
-    Button*         pService[2]{};
     QLabel*         pTimeoutLabel{};
     QLabel*         pSetsLabel{};
-    QLabel*         pServiceLabel{};
     QLabel*         pScoreLabel{};
 
     QPushButton*  pNewSetButton{};
@@ -113,5 +110,7 @@ private:
     QLinearGradient panelGradient;
     QBrush          panelBrush;
     int             maxTeamNameLen;
+    QTimer          startTime;
+    QTimer          updateTime;
 };
 

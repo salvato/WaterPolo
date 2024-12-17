@@ -32,13 +32,13 @@ WaterPoloApp::WaterPoloApp(int &argc, char **argv)
     , pLogFile(nullptr)
     , pScoreController(nullptr)
 {
-    pSettings = new QSettings("Gabriele Salvato", "Volley ScoreBoard");
+    pSettings = new QSettings("Gabriele Salvato", "WaterPolo ScoreBoard");
     sLanguage = pSettings->value("language/current",  QString("Italiano")).toString();
 
     QString sBaseDir;
     sBaseDir = QDir::homePath();
     if(!sBaseDir.endsWith(QString("/"))) sBaseDir+= QString("/");
-    logFileName = QString("%1volley_panel.txt").arg(sBaseDir);
+    logFileName = QString("%1WaterPolo_panel.txt").arg(sBaseDir);
     PrepareLogFile();
 
 #ifdef LOG_VERBOSE
@@ -67,7 +67,7 @@ WaterPoloApp::PrepareLogFile() {
     }
     pLogFile = new QFile(logFileName);
     if (!pLogFile->open(QIODevice::WriteOnly)) {
-        QMessageBox::information(Q_NULLPTR, "Segnapunti Volley",
+        QMessageBox::information(Q_NULLPTR, "Segnapunti WaterPolo",
                                  QString("Impossibile aprire il file %1: %2.")
                                      .arg(logFileName, pLogFile->errorString()));
         delete pLogFile;

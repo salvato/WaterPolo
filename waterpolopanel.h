@@ -34,9 +34,6 @@ public:
     void setScore(int iTeam, int iScore);
     void setSets(int iTeam, int iSets);
     void setTimeout(int iTeam, int iTimeout);
-    void startTimeout(int iTimeoutDuration);
-    void stopTimeout();
-    void setServizio(int iServizio);
     void setMirrored(bool isPanelMirrored);
     bool getMirrored();
     void setLogo(int iTeam, QString sFileLogo);
@@ -70,5 +67,4 @@ private:
     int               iTeamFontSize;
     int               iLabelsFontSize;
     int               maxTeamNameLen;
-    QPixmap*          pPixmapService;
 };

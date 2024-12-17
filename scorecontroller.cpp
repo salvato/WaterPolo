@@ -38,7 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ScoreController::ScoreController(QFile *myLogFile, QWidget *parent)
     : QMainWindow(parent)
     , pLogFile(myLogFile)
-    , pSettings(new QSettings("Gabriele Salvato", "Volley Controller"))
+    , pSettings(new QSettings("Gabriele Salvato", "WaterPolo Controller"))
     , pVideoPlayer(nullptr)
     , pMySlideWindow(new SlideWidget())
     #ifdef Q_OS_WINDOWS
@@ -255,13 +255,13 @@ ScoreController::onButtonSetupClicked() {
 }
 
 
-// Dummy... see Volley Panel
+// Dummy... see WaterPolo Panel
 void
 ScoreController::GeneralSetup() {
 }
 
 
-// Dummy... see Volley Panel
+// Dummy... see WaterPolo Panel
 void
 ScoreController::SaveStatus() {
 }

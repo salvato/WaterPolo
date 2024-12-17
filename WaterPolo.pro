@@ -69,6 +69,34 @@ RESOURCES += \
 DISTFILES += \
     Logo_UniMe2.png \
     Note.txt \
+    buttonIcons/Camera.png \
+    buttonIcons/ExchangeVolleyField.png \
+    buttonIcons/GeneralSetup.png \
+    buttonIcons/Minus.png \
+    buttonIcons/New-Game-Volley.png \
+    buttonIcons/New-Set-Volley.png \
+    buttonIcons/PanelSetup.png \
+    buttonIcons/PlaySlides.png \
+    buttonIcons/PlaySpots.png \
+    buttonIcons/Plus.png \
+    buttonIcons/ball2.png \
+    buttonIcons/image-missing.png \
+    buttonIcons/scad Models/Arrow.scad \
+    buttonIcons/scad Models/BasketField.scad \
+    buttonIcons/scad Models/ExchangeBasketField.scad \
+    buttonIcons/scadFiles/ExchangeVolleyField.scad \
+    buttonIcons/scadFiles/GeneralSetup.scad \
+    buttonIcons/scadFiles/NewGameVolley.scad \
+    buttonIcons/scadFiles/NewSetVolley.scad \
+    buttonIcons/scadFiles/PanelSetup.scad \
+    buttonIcons/scadFiles/Setup.scad \
+    buttonIcons/scadFiles/Slides.png \
+    buttonIcons/scadFiles/Slides.scad \
+    buttonIcons/scadFiles/Spots.scad \
+    buttonIcons/scadFiles/VolleyField.scad \
+    buttonIcons/scadFiles/VolleyPlayer.scad \
+    buttonIcons/sign_stop.png \
+    buttonIcons/video-display.png \
     fAngular.glsl \
     fBookFlip.glsl \
     fshader.glsl \

@@ -91,18 +91,6 @@ WaterPoloPanel::setSets(int iTeam, int iSets) {
 
 
 void
-WaterPoloPanel::setServizio(int iServizio) {
-    pServizio[0]->setText(" ");
-    pServizio[1]->setText(" ");
-    if(iServizio == 0) {
-        pServizio[0]->setPixmap(*pPixmapService);
-    } else if(iServizio == 1) {
-        pServizio[1]->setPixmap(*pPixmapService);
-    }
-}
-
-
-void
 WaterPoloPanel::setTimeout(int iTeam, int iTimeout) {
     pTimeout[iTeam]->setText(QString("%1").arg(iTimeout));
 }
@@ -203,9 +191,6 @@ WaterPoloPanel::createPanel() {
         ileft  = 1;
         iright = 0;
     }
-
-    pPixmapService = new QPixmap(":/ball2.png");
-    *pPixmapService = pPixmapService->scaled(2*iLabelsFontSize/3, 2*iLabelsFontSize/3);
 
     layout->addWidget(pTeam[ileft],      0, 0, 2, 6, Qt::AlignHCenter|Qt::AlignVCenter);
     layout->addWidget(pTeam[iright],     0, 6, 2, 6, Qt::AlignHCenter|Qt::AlignVCenter);
