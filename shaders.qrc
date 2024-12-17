@@ -1,0 +1,46 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Shaders/fAngular.glsl</file>
+        <file>Shaders/fBookFlip.glsl</file>
+        <file>Shaders/fBounce.glsl</file>
+        <file>Shaders/fDoomScreen.glsl</file>
+        <file>Shaders/fFilmBurn.glsl</file>
+        <file>Shaders/fWaterDrop.glsl</file>
+        <file>Shaders/vShader.glsl</file>
+        <file>Shaders/fFlyEye.glsl</file>
+        <file>Shaders/fPrefix.glsl</file>
+        <file>Shaders/fMain.glsl</file>
+        <file>Shaders/fMorph.glsl</file>
+        <file>Shaders/fPerlin.glsl</file>
+        <file>Shaders/fPinwheel.glsl</file>
+        <file>Shaders/fPolkaDotsCurtain.glsl</file>
+        <file>Shaders/fPowerKaleido.glsl</file>
+        <file>Shaders/fInvertedPageCurl.glsl</file>
+        <file>Shaders/fDisplacement.glsl</file>
+        <file>Shaders/fSwirl.glsl</file>
+        <file>Shaders/fDreamy.glsl</file>
+        <file>Shaders/fCrosshatch.glsl</file>
+        <file>Shaders/fRadial.glsl</file>
+        <file>Shaders/fRipple.glsl</file>
+        <file>Shaders/fCircleopen.glsl</file>
+        <file>Shaders/fFade.glsl</file>
+        <file>Shaders/fMultiply_blend.glsl</file>
+        <file>Shaders/fPixelize.glsl</file>
+        <file>Shaders/fWind.glsl</file>
+        <file>Shaders/fSwap.glsl</file>
+        <file>Shaders/fCrosswarp.glsl</file>
+        <file>Shaders/fAvatar.glsl</file>
+        <file>Shaders/vRace.glsl</file>
+        <file>Shaders/fRace.glsl</file>
+        <file>Shaders/vDepth.glsl</file>
+        <file>Shaders/fDepth.glsl</file>
+        <file>Shaders/fDebug_quad.glsl</file>
+        <file>Shaders/vDebug_quad.glsl</file>
+        <file>Shaders/fParticle.glsl</file>
+        <file>Shaders/vParticle.glsl</file>
+        <file>Shaders/fGlyphs.glsl</file>
+        <file>Shaders/vGlyphs.glsl</file>
+        <file>Shaders/vText.glsl</file>
+        <file>Shaders/fText.glsl</file>
+    </qresource>
+</RCC>
