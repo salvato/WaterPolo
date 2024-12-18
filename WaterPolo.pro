@@ -67,6 +67,7 @@ RESOURCES += \
     shaders.qrc
 
 DISTFILES += \
+    .gitignore \
     Logo_UniMe2.png \
     Note.txt \
     buttonIcons/Camera.png \

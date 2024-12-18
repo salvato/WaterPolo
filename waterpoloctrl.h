@@ -59,7 +59,7 @@ protected:
     void          GeneralSetup();
 
 private slots:
-    void onStart();
+    void onAppStart();
     void onTimeUpdate();
     void closeEvent(QCloseEvent*);
     void onTimeOutIncrement(int iTeam);
@@ -112,6 +112,9 @@ private:
     QTimer          startTime;
     QTimer          updateTime;
     QElapsedTimer   tempoTime;
-    int             remainingMilliSeconds;
+    // qint64          startMilli;
+    // qint64          stopMilli;
+     qint64          runMilli;
+    qint64          remainingMilliSeconds;
 };
 

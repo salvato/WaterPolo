@@ -42,6 +42,7 @@ WaterPoloCtrl::WaterPoloCtrl(QFile *myLogFile, QWidget *parent)
     , pWaterPoloPanel(new WaterPoloPanel(myLogFile))
     , bFontBuilt(false)
     , maxTeamNameLen(15)
+    , runMilli(0)
 {
     setWindowTitle("Score Controller - © Gabriele Salvato (2025)");
     setWindowIcon(QIcon(":/Logo.ico"));
@@ -73,6 +74,7 @@ WaterPoloCtrl::WaterPoloCtrl(QFile *myLogFile, QWidget *parent)
     updateTime.setTimerType(Qt::PreciseTimer);
 
     setEventHandlers();
+    pCountStop->setDisabled(true);
 
     startTime.start(100);
 }
@@ -493,7 +495,7 @@ WaterPoloCtrl::buildControls() {
 
     // Time Count
     QString sRemainingTime;
-    div_t iRes = div(remainingMilliSeconds, 60000);
+    lldiv_t iRes = div(remainingMilliSeconds, qint64(60000));
     sRemainingTime = QString("%1:%2").arg(iRes.quot, 1)
                          .arg(int(iRes.rem), 2, 10, QChar('0'));
     pTimeEdit = new Edit(sRemainingTime, 0);
@@ -514,7 +516,7 @@ WaterPoloCtrl::buildControls() {
 void
 WaterPoloCtrl::setEventHandlers() {
     connect(&startTime, SIGNAL(timeout()),
-            this, SLOT(onStart()));
+            this, SLOT(onAppStart()));
     connect(&updateTime, SIGNAL(timeout()),
             this, SLOT(onTimeUpdate()));
     for(int iTeam=0; iTeam <2; iTeam++) {
@@ -524,8 +526,6 @@ WaterPoloCtrl::setEventHandlers() {
                 this, SLOT(onTimeOutIncrement(int)));
         connect(pTimeoutDecrement[iTeam], SIGNAL(buttonClicked(int)),
                 this, SLOT(onTimeOutDecrement(int)));
-        // connect(pService[iTeam], SIGNAL(buttonClicked(int)),
-        //         this, SLOT(onServiceClicked(int)));
         connect(pScoreIncrement[iTeam], SIGNAL(buttonClicked(int)),
                 this, SLOT(onScoreIncrement(int)));
         connect(pScoreDecrement[iTeam], SIGNAL(buttonClicked(int)),
@@ -553,7 +553,7 @@ WaterPoloCtrl::setEventHandlers() {
 // =========================
 
 void
-WaterPoloCtrl::onStart() {
+WaterPoloCtrl::onAppStart() {
     sendAll();
     updateTime.start(20);
 }
@@ -561,12 +561,23 @@ WaterPoloCtrl::onStart() {
 
 void
 WaterPoloCtrl::onTimeUpdate() {
-    QString sRemainingTime;
-    div_t iRes = div(remainingMilliSeconds, 60000);
-    sRemainingTime = QString("%1:%2").arg(iRes.quot, 1)
-                         .arg(int(iRes.rem), 2, 10, QChar('0'));
-    pTimeEdit->setText(sRemainingTime);
-    // Send the Updated Time;
+    if(tempoTime.isValid()) {
+        qint64 currentMilli = tempoTime.elapsed();
+        currentMilli += runMilli;
+        qint64 timeToStop = remainingMilliSeconds-currentMilli;
+        if(timeToStop<=0) {
+            pCountStart->setDisabled(true);
+            pCountStop->setDisabled(true);
+            timeToStop = 0;
+            tempoTime.invalidate();
+        }
+        QString sRemainingTime;
+        lldiv_t iRes = div(timeToStop, qint64(60000));
+        sRemainingTime = QString("%1:%2").arg(iRes.quot, 1)
+                             .arg(int(iRes.rem), 2, 10, QChar('0'));
+        pTimeEdit->setText(sRemainingTime);
+        // Send the Updated Time;
+    }
 }
 
 
@@ -617,44 +628,19 @@ WaterPoloCtrl::onTimeOutDecrement(int iTeam) {
 void
 WaterPoloCtrl::onCountStart(int iTeam) {
     Q_UNUSED(iTeam)
-    // iSet[iTeam]++;
-    // pSetsDecrement[iTeam]->setEnabled(true);
-    // if(iSet[iTeam] == gsArgs.maxSet) {
-    //     pSetsIncrement[iTeam]->setEnabled(false);
-    // }
-    // pWaterPoloPanel->setSets(iTeam, iSet[iTeam]);
-    // QString sMessage = QString("<set%1>%2</set%3>")
-    //                        .arg(iTeam,1)
-    //                        .arg(iSet[iTeam])
-    //                        .arg(iTeam,1);
-    // pBtServer->sendMessage(sMessage);
-    // QString sText;
-    // sText = QString("%1").arg(iSet[iTeam], 1);
-    // pSetsEdit[iTeam]->setText(sText);
-    // sText = QString("team%1/sets").arg(iTeam+1, 1);
-    // pSettings->setValue(sText, iSet[iTeam]);
+    tempoTime.restart();
+    pCountStart->setDisabled(true);
+    pCountStop->setEnabled(true);
 }
 
 
 void
 WaterPoloCtrl::onCountStop(int iTeam) {
     Q_UNUSED(iTeam)
-    // iSet[iTeam]--;
-    // pSetsIncrement[iTeam]->setEnabled(true);
-    // if(iSet[iTeam] == 0) {
-    //     pSetsDecrement[iTeam]->setEnabled(false);
-    // }
-    // pWaterPoloPanel->setSets(iTeam, iSet[iTeam]);
-    // QString sMessage = QString("<set%1>%2</set%3>")
-    //                        .arg(iTeam,1)
-    //                        .arg(iSet[iTeam])
-    //                        .arg(iTeam,1);
-    // pBtServer->sendMessage(sMessage);
-    // QString sText;
-    // sText = QString("%1").arg(iSet[iTeam], 1);
-    // pSetsEdit[iTeam]->setText(sText);
-    // sText = QString("team%1/sets").arg(iTeam+1, 1);
-    // pSettings->setValue(sText, iSet[iTeam]);
+    runMilli += tempoTime.elapsed();
+    tempoTime.invalidate();
+    pCountStart->setEnabled(true);
+    pCountStop->setDisabled(true);
 }
 
 
