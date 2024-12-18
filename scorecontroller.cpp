@@ -612,6 +612,7 @@ ScoreController::processMessage(const QString &sender, const QString &message) {
 
 void
 ScoreController::processBtMessage(QString sMessage) {
+    Q_UNUSED(sMessage)
 }
 
 

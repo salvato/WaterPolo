@@ -98,26 +98,26 @@ GeneralSetupDialog::GeneralSetupDialog(GeneralSetupArguments* pArguments)
     connect(&buttonSelectTeam1Logo, SIGNAL(clicked()),
             this, SLOT(onSelectLogo1()));
 
-    QLabel* pNumTimeoutLabel      = new QLabel(tr("Max Timeouts:"));
-    QLabel* pMaxSetLabel          = new QLabel(tr("Max Sets:"));
-    QLabel* pTimeoutDurationLabel = new QLabel(tr("Timeout sec:"));
+    QLabel* pNumTimeoutLabel   = new QLabel(tr("Max Timeouts:"));
+    QLabel* pMaxPeriodsLabel   = new QLabel(tr("Max Periods:"));
+    QLabel* pTimeDurationLabel = new QLabel(tr("Periods duration (min):"));
     QLabel* pTeamLabel[2];
     for(int i=0; i<2; i++) {
         pTeamLabel[i] = new QLabel("Logo "+pTempArguments->sTeam[i]);
     }
 
     numTimeoutEdit.setMaxLength(1);
-    maxSetEdit.setMaxLength(1);
-    timeoutDurationEdit.setMaxLength(2);
+    maxPeriodsEdit.setMaxLength(1);
+    timeDurationEdit.setMaxLength(2);
 
     numTimeoutEdit.setStyleSheet("background:white;color:black");
-    maxSetEdit.setStyleSheet("background:white;color:black");
-    timeoutDurationEdit.setStyleSheet("background:white;color:black");
+    maxPeriodsEdit.setStyleSheet("background:white;color:black");
+    timeDurationEdit.setStyleSheet("background:white;color:black");
     directionCombo.setStyleSheet("background:white;color:black");
 
     numTimeoutEdit.setText(QString("%1").arg(pArguments->maxTimeout));
-    maxSetEdit.setText(QString("%1").arg(pArguments->maxSet));
-    timeoutDurationEdit.setText(QString("%1").arg(pArguments->iTimeoutDuration));
+    maxPeriodsEdit.setText(QString("%1").arg(pArguments->maxPeriods));
+    timeDurationEdit.setText(QString("%1").arg(pArguments->iTimeDuration));
 
     QGridLayout* pMainLayout = new QGridLayout;
 
@@ -132,11 +132,11 @@ GeneralSetupDialog::GeneralSetupDialog(GeneralSetupArguments* pArguments)
     pMainLayout->addWidget(pNumTimeoutLabel,        2, 0, 1, 3);
     pMainLayout->addWidget(&numTimeoutEdit,         2, 3, 1, 1);
 
-    pMainLayout->addWidget(pMaxSetLabel,            3, 0, 1, 3);
-    pMainLayout->addWidget(&maxSetEdit,             3, 3, 1, 1);
+    pMainLayout->addWidget(pMaxPeriodsLabel,        3, 0, 1, 3);
+    pMainLayout->addWidget(&maxPeriodsEdit,         3, 3, 1, 1);
 
-    pMainLayout->addWidget(pTimeoutDurationLabel,   4, 0, 1, 3);
-    pMainLayout->addWidget(&timeoutDurationEdit,    4, 3, 1, 1);
+    pMainLayout->addWidget(pTimeDurationLabel,      4, 0, 1, 3);
+    pMainLayout->addWidget(&timeDurationEdit,       4, 3, 1, 1);
 
     pMainLayout->addWidget(pLabelDirection,         5, 0, 1, 2);
     pMainLayout->addWidget(&directionCombo,         5, 2, 1, 6);
@@ -289,9 +289,9 @@ GeneralSetupDialog::onChangePanelOrientation(int iOrientation) {
 
 void
 GeneralSetupDialog::onOk() {
-    pTempArguments->iTimeoutDuration     = timeoutDurationEdit.text().toInt();
+    pTempArguments->iTimeDuration        = timeDurationEdit.text().toInt();
     pTempArguments->maxTimeout           = numTimeoutEdit.text().toInt();
-    pTempArguments->maxSet               = maxSetEdit.text().toInt();
+    pTempArguments->maxPeriods           = maxPeriodsEdit.text().toInt();
     pTempArguments->sSlideDir            = slidesDirEdit.text();
     pTempArguments->sSpotDir             = spotsDirEdit.text();
     pTempArguments->sTeamLogoFilePath[0] = teamLogoPathEdit[0].text();

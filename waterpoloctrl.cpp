@@ -70,9 +70,10 @@ WaterPoloCtrl::WaterPoloCtrl(QFile *myLogFile, QWidget *parent)
     setWindowLayout();
 
     pWaterPoloPanel->showFullScreen();
+    updateTime.setTimerType(Qt::PreciseTimer);
+
     setEventHandlers();
 
-    // Wait a little before sending Starting Data to the Panel
     startTime.start(100);
 }
 
@@ -148,7 +149,6 @@ WaterPoloCtrl::buildFontSizes() {
 
     font.setPixelSize(iFontSize*0.75);
     pTimeoutLabel->setFont(font);
-    pSetsLabel->setFont(font);
     pScoreLabel->setFont(font);
 
     font.setWeight(QFont::Black);
@@ -156,14 +156,13 @@ WaterPoloCtrl::buildFontSizes() {
     font.setPixelSize(iFontSize);
     pTeamName[0]->setFont(font);
     pTeamName[1]->setFont(font);
-    pSetsEdit[0]->setFont(font);
-    pSetsEdit[1]->setFont(font);
     pTimeoutEdit[0]->setFont(font);
     pTimeoutEdit[1]->setFont(font);
 
     font.setPixelSize(2*iFontSize);
     pScoreEdit[0]->setFont(font);
     pScoreEdit[1]->setFont(font);
+    pTimeEdit->setFont(font);
 }
 
 
@@ -218,12 +217,10 @@ WaterPoloCtrl::CreateGamePanel() {
         gamePanel->addWidget(pScoreIncrement[iTeam], iRow, iCol+2, 2, 1, Qt::AlignLeft);
         iRow += 2;
         // Tempo
-        // gamePanel->addWidget(pService[iTeam],   iRow, iCol, 1, 4, Qt::AlignHCenter|Qt::AlignVCenter);
+        //gamePanel->addWidget(pSetsEdit[iTeam],   iRow, iCol, 1, 4, Qt::AlignHCenter|Qt::AlignVCenter);
         iRow += 1;
         // Quarto
-        // gamePanel->addWidget(pSetsDecrement[iTeam], iRow, iCol,   1, 1, Qt::AlignRight);
         // gamePanel->addWidget(pSetsEdit[iTeam],      iRow, iCol+1, 1, 1, Qt::AlignHCenter|Qt::AlignVCenter);
-        // gamePanel->addWidget(pSetsIncrement[iTeam], iRow, iCol+2, 1, 1, Qt::AlignLeft);
         iRow += 1;
         // Timeouts
         gamePanel->addWidget(pTimeoutDecrement[iTeam], iRow, iCol,   1, 1, Qt::AlignRight);
@@ -235,13 +232,16 @@ WaterPoloCtrl::CreateGamePanel() {
     myFrame->setFrameShape(QFrame::HLine);
     gamePanel->addWidget(myFrame, iRow, 0, 1, 10);
 
+    // Labels & Time
     iRow = 1;
     gamePanel->addWidget(pScoreLabel,   iRow, 3, 2, 2);
     iRow += 2;
     // gamePanel->addWidget(pServiceLabel, iRow, 3, 1, 2);
-    iRow += 1;
-    gamePanel->addWidget(pSetsLabel,    iRow, 3, 1, 2);
-    iRow += 1;
+    //iRow += 1;
+    gamePanel->addWidget(pCountStart, iRow, 2,   1, 1, Qt::AlignRight);
+    gamePanel->addWidget(pCountStop,  iRow, 5, 1, 1, Qt::AlignLeft);
+    gamePanel->addWidget(pTimeEdit,   iRow, 3, 2, 2);
+    iRow += 2;
     gamePanel->addWidget(pTimeoutLabel, iRow, 3, 1, 2);
     //    iRow += 1;
 
@@ -287,8 +287,8 @@ WaterPoloCtrl::CreateGameButtons() {
 void
 WaterPoloCtrl::GetSettings() {
     gsArgs.maxTimeout           = pSettings->value("volley/maxTimeout", 2).toInt();
-    gsArgs.maxSet               = pSettings->value("volley/maxSet", 3).toInt();
-    gsArgs.iTimeoutDuration     = pSettings->value("volley/TimeoutDuration", 30).toInt();
+    gsArgs.maxPeriods           = pSettings->value("volley/maxPeriods", 4).toInt();
+    gsArgs.iTimeDuration        = pSettings->value("volley/TimeDuration", 8).toInt();
     gsArgs.sSlideDir            = pSettings->value("directories/slides", gsArgs.sSlideDir).toString();
     gsArgs.sSpotDir             = pSettings->value("directories/spots",  gsArgs.sSpotDir).toString();
     gsArgs.isPanelMirrored      = pSettings->value("panel/orientation",  true).toBool();
@@ -299,17 +299,15 @@ WaterPoloCtrl::GetSettings() {
 
     iTimeout[0] = pSettings->value("team1/timeouts", 0).toInt();
     iTimeout[1] = pSettings->value("team2/timeouts", 0).toInt();
-    iSet[0]     = pSettings->value("team1/sets", 0).toInt();
-    iSet[1]     = pSettings->value("team2/sets", 0).toInt();
     iScore[0]   = pSettings->value("team1/score", 0).toInt();
     iScore[1]   = pSettings->value("team2/score", 0).toInt();
+
+    remainingMilliSeconds = gsArgs.iTimeDuration * 60000;
 
     // Check Stored Values vs Maximum Values
     for(int i=0; i<2; i++) {
         if(iTimeout[i] > gsArgs.maxTimeout)
             iTimeout[i] = gsArgs.maxTimeout;
-        if(iSet[i] > gsArgs.maxSet)
-            iSet[i] = gsArgs.maxSet;
     }
 
 }
@@ -320,7 +318,6 @@ WaterPoloCtrl::sendAll() {
     for(int i=0; i<2; i++) {
         pWaterPoloPanel->setTeam(i, pTeamName[i]->text());
         pWaterPoloPanel->setTimeout(i, iTimeout[i]);
-        pWaterPoloPanel->setSets(i, iSet[i]);
         pWaterPoloPanel->setScore(i, iScore[i]);
     }
     pWaterPoloPanel->setLogo(0, gsArgs.sTeamLogoFilePath[0]);
@@ -349,11 +346,6 @@ WaterPoloCtrl::btSendAll() {
                        .arg(iTimeout[i])
                        .arg(i,1);
         pBtServer->sendMessage(sMessage);
-        sMessage = QString("<set%1>%2</set%3>")
-                       .arg(i,1)
-                       .arg(iSet[i])
-                       .arg(i,1);
-        pBtServer->sendMessage(sMessage);
         sMessage = QString("<score%1>%2</score%3>")
                        .arg(i,1)
                        .arg(iScore[i], 2)
@@ -376,8 +368,6 @@ WaterPoloCtrl::SaveStatus() {
     pSettings->setValue("team2/name", gsArgs.sTeam[1]);
     pSettings->setValue("team1/timeouts", iTimeout[0]);
     pSettings->setValue("team2/timeouts", iTimeout[1]);
-    pSettings->setValue("team1/sets", iSet[0]);
-    pSettings->setValue("team2/sets", iSet[1]);
     pSettings->setValue("team1/score", iScore[0]);
     pSettings->setValue("team2/score", iScore[1]);
 }
@@ -388,8 +378,8 @@ WaterPoloCtrl::SaveSettings() { // Save General Setup Values
     pSettings->setValue("directories/slides",     gsArgs.sSlideDir);
     pSettings->setValue("directories/spots",      gsArgs.sSpotDir);
     pSettings->setValue("volley/maxTimeout",      gsArgs.maxTimeout);
-    pSettings->setValue("volley/maxSet",          gsArgs.maxSet);
-    pSettings->setValue("volley/TimeoutDuration", gsArgs.iTimeoutDuration);
+    pSettings->setValue("volley/maxPeriods",      gsArgs.maxPeriods);
+    pSettings->setValue("volley/TimeDuration",    gsArgs.iTimeDuration);
     pSettings->setValue("panel/orientation",      gsArgs.isPanelMirrored);
     pSettings->setValue("panel/logo0",            gsArgs.sTeamLogoFilePath[0]);
     pSettings->setValue("panel/logo1",            gsArgs.sTeamLogoFilePath[1]);
@@ -409,13 +399,16 @@ WaterPoloCtrl::buildControls() {
 
     QPalette pal = panelPalette;
     pal.setColor(QPalette::Text, Qt::white);
+
     for(int iTeam=0; iTeam<2; iTeam++){
+
         // Teams
         pTeamName[iTeam] = new Edit(gsArgs.sTeam[iTeam], iTeam);
         pTeamName[iTeam]->setAlignment(Qt::AlignHCenter);
         pTeamName[iTeam]->setMaxLength(MAX_NAMELENGTH);
         pal.setColor(QPalette::Text, Qt::white);
         pTeamName[iTeam]->setPalette(pal);
+
         // Timeout
         sString = QString("%1").arg(iTimeout[iTeam], 1);
         pTimeoutEdit[iTeam] = new Edit(sString, iTeam);
@@ -424,6 +417,7 @@ WaterPoloCtrl::buildControls() {
         pal.setColor(QPalette::Text, Qt::yellow);
         pTimeoutEdit[iTeam]->setPalette(pal);
         pTimeoutEdit[iTeam]->setReadOnly(true);
+
         // Timeout buttons
         pTimeoutIncrement[iTeam] = new Button("", iTeam);
         pTimeoutIncrement[iTeam]->setIcon(plusButtonIcon);
@@ -437,24 +431,15 @@ WaterPoloCtrl::buildControls() {
             pTimeoutIncrement[iTeam]->setEnabled(false);
             pTimeoutEdit[iTeam]->setStyleSheet("background:rgba(0, 0, 0, 0);color:red; border: none");
         }
+
         // Sets
-        sString = QString("%1").arg(iSet[iTeam], 1);
-        pSetsEdit[iTeam] = new Edit(sString, iTeam);
-        pSetsEdit[iTeam]->setAlignment(Qt::AlignHCenter);
-        pSetsEdit[iTeam]->setMaxLength(1);
-        pSetsEdit[iTeam]->setPalette(pal);
-        pSetsEdit[iTeam]->setReadOnly(true);
-        // Set buttons
-        pSetsIncrement[iTeam] = new Button("", iTeam);
-        pSetsIncrement[iTeam]->setIcon(plusButtonIcon);
-        pSetsIncrement[iTeam]->setIconSize(plusPixmap.rect().size());
-        pSetsDecrement[iTeam] = new Button("", iTeam);
-        pSetsDecrement[iTeam]->setIcon(minusButtonIcon);
-        pSetsDecrement[iTeam]->setIconSize(minusPixmap.rect().size());
-        if(iSet[iTeam] == 0)
-            pSetsDecrement[iTeam]->setEnabled(false);
-        if(iSet[iTeam] == gsArgs.maxSet)
-            pSetsIncrement[iTeam]->setEnabled(false);
+        // sString = QString("%1").arg(iSet[iTeam], 1);
+        // pSetsEdit[iTeam] = new Edit(sString, iTeam);
+        // pSetsEdit[iTeam]->setAlignment(Qt::AlignHCenter);
+        // pSetsEdit[iTeam]->setMaxLength(1);
+        // pSetsEdit[iTeam]->setPalette(pal);
+        // pSetsEdit[iTeam]->setReadOnly(true);
+
         // Service
         // QPixmap pixmap(QString(":/ball%1.png").arg(iTeam));
         // QIcon ButtonIcon(pixmap);
@@ -465,6 +450,7 @@ WaterPoloCtrl::buildControls() {
         // pService[iTeam]->setIconSize(QSize(height/16,height/16));
         // pService[iTeam]->setCheckable(true);
         // pService[iTeam]->setStyleSheet("QPushButton:checked { background-color: rgb(128, 128, 255); border:none }");
+
         // Score
         pScoreLabel = new QLabel(tr("Punti"));
         pScoreLabel->setAlignment(Qt::AlignRight|Qt::AlignHCenter);
@@ -474,6 +460,7 @@ WaterPoloCtrl::buildControls() {
         pScoreEdit[iTeam]->setMaxLength(2);
         pScoreEdit[iTeam]->setPalette(pal);
         pScoreEdit[iTeam]->setReadOnly(true);
+
         // Score buttons
         pScoreIncrement[iTeam] = new Button("", iTeam);
         pScoreIncrement[iTeam]->setIcon(plusButtonIcon);
@@ -484,12 +471,37 @@ WaterPoloCtrl::buildControls() {
         if(iScore[iTeam] == 0)
             pScoreDecrement[iTeam]->setEnabled(false);
     }
+
     // Timeout
     pTimeoutLabel = new QLabel(tr("Timeout"));
     pTimeoutLabel->setAlignment(Qt::AlignHCenter|Qt::AlignVCenter);
-    // Set
-    pSetsLabel = new QLabel(tr("Set"));
-    pSetsLabel->setAlignment(Qt::AlignHCenter|Qt::AlignVCenter);
+
+    // Start/Stop Count buttons
+    QPixmap pixmap;
+    QIcon ButtonIcon;
+    pixmap.load(":/buttonIcons/Go.png");
+    ButtonIcon.addPixmap(pixmap);
+    pCountStart = new Button("", 0);
+    pCountStart->setIcon(ButtonIcon);
+    pCountStart->setIconSize(pixmap.rect().size());
+
+    pixmap.load(":/buttonIcons/sign_stop.png");
+    ButtonIcon.addPixmap(pixmap);
+    pCountStop = new Button("", 0);
+    pCountStop->setIcon(ButtonIcon);
+    pCountStop->setIconSize(pixmap.rect().size());
+
+    // Time Count
+    QString sRemainingTime;
+    div_t iRes = div(remainingMilliSeconds, 60000);
+    sRemainingTime = QString("%1:%2").arg(iRes.quot, 1)
+                         .arg(int(iRes.rem), 2, 10, QChar('0'));
+    pTimeEdit = new Edit(sRemainingTime, 0);
+    pTimeEdit->setAlignment(Qt::AlignHCenter|Qt::AlignVCenter);
+    pTimeEdit->setMaxLength(4);
+    pTimeEdit->setPalette(pal);
+    pTimeEdit->setReadOnly(true);
+
     // Service
     // pServiceLabel = new QLabel(tr("Servizio"));
     // pServiceLabel->setAlignment(Qt::AlignHCenter|Qt::AlignVCenter);
@@ -512,10 +524,6 @@ WaterPoloCtrl::setEventHandlers() {
                 this, SLOT(onTimeOutIncrement(int)));
         connect(pTimeoutDecrement[iTeam], SIGNAL(buttonClicked(int)),
                 this, SLOT(onTimeOutDecrement(int)));
-        connect(pSetsIncrement[iTeam], SIGNAL(buttonClicked(int)),
-                this, SLOT(onSetIncrement(int)));
-        connect(pSetsDecrement[iTeam], SIGNAL(buttonClicked(int)),
-                this, SLOT(onSetDecrement(int)));
         // connect(pService[iTeam], SIGNAL(buttonClicked(int)),
         //         this, SLOT(onServiceClicked(int)));
         connect(pScoreIncrement[iTeam], SIGNAL(buttonClicked(int)),
@@ -523,6 +531,11 @@ WaterPoloCtrl::setEventHandlers() {
         connect(pScoreDecrement[iTeam], SIGNAL(buttonClicked(int)),
                 this, SLOT(onScoreDecrement(int)));
     }
+    // Start/Stop Count
+    connect(pCountStart, SIGNAL(buttonClicked(int)),
+            this, SLOT(onCountStart(int)));
+    connect(pCountStop, SIGNAL(buttonClicked(int)),
+            this, SLOT(onCountStop(int)));
     // New Set
     connect(pNewSetButton, SIGNAL(clicked(bool)),
             this, SLOT(onButtonNewSetClicked()));
@@ -542,11 +555,17 @@ WaterPoloCtrl::setEventHandlers() {
 void
 WaterPoloCtrl::onStart() {
     sendAll();
+    updateTime.start(20);
 }
 
 
 void
 WaterPoloCtrl::onTimeUpdate() {
+    QString sRemainingTime;
+    div_t iRes = div(remainingMilliSeconds, 60000);
+    sRemainingTime = QString("%1:%2").arg(iRes.quot, 1)
+                         .arg(int(iRes.rem), 2, 10, QChar('0'));
+    pTimeEdit->setText(sRemainingTime);
     // Send the Updated Time;
 }
 
@@ -596,44 +615,46 @@ WaterPoloCtrl::onTimeOutDecrement(int iTeam) {
 
 
 void
-WaterPoloCtrl::onSetIncrement(int iTeam) {
-    iSet[iTeam]++;
-    pSetsDecrement[iTeam]->setEnabled(true);
-    if(iSet[iTeam] == gsArgs.maxSet) {
-        pSetsIncrement[iTeam]->setEnabled(false);
-    }
-    pWaterPoloPanel->setSets(iTeam, iSet[iTeam]);
-    QString sMessage = QString("<set%1>%2</set%3>")
-                           .arg(iTeam,1)
-                           .arg(iSet[iTeam])
-                           .arg(iTeam,1);
-    pBtServer->sendMessage(sMessage);
-    QString sText;
-    sText = QString("%1").arg(iSet[iTeam], 1);
-    pSetsEdit[iTeam]->setText(sText);
-    sText = QString("team%1/sets").arg(iTeam+1, 1);
-    pSettings->setValue(sText, iSet[iTeam]);
+WaterPoloCtrl::onCountStart(int iTeam) {
+    Q_UNUSED(iTeam)
+    // iSet[iTeam]++;
+    // pSetsDecrement[iTeam]->setEnabled(true);
+    // if(iSet[iTeam] == gsArgs.maxSet) {
+    //     pSetsIncrement[iTeam]->setEnabled(false);
+    // }
+    // pWaterPoloPanel->setSets(iTeam, iSet[iTeam]);
+    // QString sMessage = QString("<set%1>%2</set%3>")
+    //                        .arg(iTeam,1)
+    //                        .arg(iSet[iTeam])
+    //                        .arg(iTeam,1);
+    // pBtServer->sendMessage(sMessage);
+    // QString sText;
+    // sText = QString("%1").arg(iSet[iTeam], 1);
+    // pSetsEdit[iTeam]->setText(sText);
+    // sText = QString("team%1/sets").arg(iTeam+1, 1);
+    // pSettings->setValue(sText, iSet[iTeam]);
 }
 
 
 void
-WaterPoloCtrl::onSetDecrement(int iTeam) {
-    iSet[iTeam]--;
-    pSetsIncrement[iTeam]->setEnabled(true);
-    if(iSet[iTeam] == 0) {
-        pSetsDecrement[iTeam]->setEnabled(false);
-    }
-    pWaterPoloPanel->setSets(iTeam, iSet[iTeam]);
-    QString sMessage = QString("<set%1>%2</set%3>")
-                           .arg(iTeam,1)
-                           .arg(iSet[iTeam])
-                           .arg(iTeam,1);
-    pBtServer->sendMessage(sMessage);
-    QString sText;
-    sText = QString("%1").arg(iSet[iTeam], 1);
-    pSetsEdit[iTeam]->setText(sText);
-    sText = QString("team%1/sets").arg(iTeam+1, 1);
-    pSettings->setValue(sText, iSet[iTeam]);
+WaterPoloCtrl::onCountStop(int iTeam) {
+    Q_UNUSED(iTeam)
+    // iSet[iTeam]--;
+    // pSetsIncrement[iTeam]->setEnabled(true);
+    // if(iSet[iTeam] == 0) {
+    //     pSetsDecrement[iTeam]->setEnabled(false);
+    // }
+    // pWaterPoloPanel->setSets(iTeam, iSet[iTeam]);
+    // QString sMessage = QString("<set%1>%2</set%3>")
+    //                        .arg(iTeam,1)
+    //                        .arg(iSet[iTeam])
+    //                        .arg(iTeam,1);
+    // pBtServer->sendMessage(sMessage);
+    // QString sText;
+    // sText = QString("%1").arg(iSet[iTeam], 1);
+    // pSetsEdit[iTeam]->setText(sText);
+    // sText = QString("team%1/sets").arg(iTeam+1, 1);
+    // pSettings->setValue(sText, iSet[iTeam]);
 }
 
 
@@ -716,14 +737,7 @@ WaterPoloCtrl::exchangeField() {
     gsArgs.sTeamLogoFilePath[0] = gsArgs.sTeamLogoFilePath[1];
     gsArgs.sTeamLogoFilePath[1] = sText;
 
-    int iVal = iSet[0];
-    iSet[0] = iSet[1];
-    iSet[1] = iVal;
-    sText = QString("%1").arg(iSet[0], 1);
-    pSetsEdit[0]->setText(sText);
-    sText = QString("%1").arg(iSet[1], 1);
-    pSetsEdit[1]->setText(sText);
-
+    int iVal;
     iVal = iScore[0];
     iScore[0] = iScore[1];
     iScore[1] = iVal;
@@ -748,15 +762,6 @@ WaterPoloCtrl::exchangeField() {
         }
         if(iScore[iTeam] > 98) {
             pScoreIncrement[iTeam]->setEnabled(false);
-        }
-
-        pSetsDecrement[iTeam]->setEnabled(true);
-        pSetsIncrement[iTeam]->setEnabled(true);
-        if(iSet[iTeam] == 0) {
-            pSetsDecrement[iTeam]->setEnabled(false);
-        }
-        if(iSet[iTeam] == gsArgs.maxSet) {
-            pSetsIncrement[iTeam]->setEnabled(false);
         }
 
         pTimeoutIncrement[iTeam]->setEnabled(true);
@@ -799,13 +804,6 @@ WaterPoloCtrl::startNewSet(){
     gsArgs.sTeamLogoFilePath[0] = gsArgs.sTeamLogoFilePath[1];
     gsArgs.sTeamLogoFilePath[1] = sText;
 
-    int iVal = iSet[0];
-    iSet[0] = iSet[1];
-    iSet[1] = iVal;
-    sText = QString("%1").arg(iSet[0], 1);
-    pSetsEdit[0]->setText(sText);
-    sText = QString("%1").arg(iSet[1], 1);
-    pSetsEdit[1]->setText(sText);
     for(int iTeam=0; iTeam<2; iTeam++) {
         iTimeout[iTeam] = 0;
         sText = QString("%1").arg(iTimeout[iTeam], 1);
@@ -816,8 +814,6 @@ WaterPoloCtrl::startNewSet(){
         pScoreEdit[iTeam]->setText(sText);
         pTimeoutDecrement[iTeam]->setEnabled(false);
         pTimeoutIncrement[iTeam]->setEnabled(true);
-        pSetsDecrement[iTeam]->setEnabled(iSet[iTeam] != 0);
-        pSetsIncrement[iTeam]->setEnabled(true);
         pScoreDecrement[iTeam]->setEnabled(false);
         pScoreIncrement[iTeam]->setEnabled(true);
     }
@@ -843,16 +839,11 @@ WaterPoloCtrl::onButtonNewGameClicked() {
         sText = QString("%1").arg(iTimeout[iTeam], 1);
         pTimeoutEdit[iTeam]->setText(sText);
         pTimeoutEdit[iTeam]->setStyleSheet("background-color: rgba(0, 0, 0, 0);color:yellow; border: none");
-        iSet[iTeam]   = 0;
-        sText = QString("%1").arg(iSet[iTeam], 1);
-        pSetsEdit[iTeam]->setText(sText);
         iScore[iTeam]   = 0;
         sText = QString("%1").arg(iScore[iTeam], 2);
         pScoreEdit[iTeam]->setText(sText);
         pTimeoutDecrement[iTeam]->setEnabled(false);
         pTimeoutIncrement[iTeam]->setEnabled(true);
-        pSetsDecrement[iTeam]->setEnabled(false);
-        pSetsIncrement[iTeam]->setEnabled(true);
         pScoreDecrement[iTeam]->setEnabled(false);
         pScoreIncrement[iTeam]->setEnabled(true);
     }
@@ -892,21 +883,21 @@ WaterPoloCtrl::processBtMessage(QString sMessage) {
         onTeamTextChanged(sToken.left(maxTeamNameLen), 1);
     }// team 1 name
 
-    sToken = XML_Parse(sMessage, "incset");
-    if(sToken != sNoData) {
-        iTeam = sToken.toInt(&ok);
-        if(!ok || (iTeam<0) || (iTeam>1))
-            return;
-        onSetIncrement(iTeam);
-    }// increment set
+    // sToken = XML_Parse(sMessage, "incset");
+    // if(sToken != sNoData) {
+    //     iTeam = sToken.toInt(&ok);
+    //     if(!ok || (iTeam<0) || (iTeam>1))
+    //         return;
+    //     onSetIncrement(iTeam);
+    // }// increment set
 
-    sToken = XML_Parse(sMessage, "decset");
-    if(sToken != sNoData){
-        iTeam = sToken.toInt(&ok);
-        if(!ok || (iTeam<0) || (iTeam>1))
-            return;
-        onSetDecrement(iTeam);
-    }// decrement set
+    // sToken = XML_Parse(sMessage, "decset");
+    // if(sToken != sNoData){
+    //     iTeam = sToken.toInt(&ok);
+    //     if(!ok || (iTeam<0) || (iTeam>1))
+    //         return;
+    //     onSetDecrement(iTeam);
+    // }// decrement set
 
     sToken = XML_Parse(sMessage, "inctimeout");
     if(sToken != sNoData){

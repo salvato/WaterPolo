@@ -61,8 +61,8 @@ private:
     QGradient   panelGradient;
     QBrush      panelBrush;
     QLineEdit   numTimeoutEdit;
-    QLineEdit   maxSetEdit;
-    QLineEdit   timeoutDurationEdit;
+    QLineEdit   maxPeriodsEdit;
+    QLineEdit   timeDurationEdit;
 
     QLineEdit   slidesDirEdit;
     QLineEdit   spotsDirEdit;

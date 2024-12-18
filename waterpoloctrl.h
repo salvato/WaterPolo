@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "panelorientation.h"
 
 #include <QTimer>
+#include <QElapsedTimer>
 
 
 QT_FORWARD_DECLARE_CLASS(QSettings)
@@ -63,8 +64,8 @@ private slots:
     void closeEvent(QCloseEvent*);
     void onTimeOutIncrement(int iTeam);
     void onTimeOutDecrement(int iTeam);
-    void onSetIncrement(int iTeam);
-    void onSetDecrement(int iTeam);
+    void onCountStart(int iTeam);
+    void onCountStop(int iTeam);
     void onScoreIncrement(int iTeam);
     void onScoreDecrement(int iTeam);
     void onTeamTextChanged(QString sText, int iTeam);
@@ -85,20 +86,18 @@ private:
 private:
     WaterPoloPanel* pWaterPoloPanel;
     int             iTimeout[2]{};
-    int             iSet[2]{};
     int             iScore[2]{};
     Edit*           pTeamName[2]{};
     Edit*           pTimeoutEdit[2]{};
-    Edit*           pSetsEdit[2]{};
     Edit*           pScoreEdit[2]{};
+    Edit*           pTimeEdit{};
     Button*         pTimeoutIncrement[2]{};
     Button*         pTimeoutDecrement[2]{};
-    Button*         pSetsIncrement[2]{};
-    Button*         pSetsDecrement[2]{};
     Button*         pScoreIncrement[2]{};
     Button*         pScoreDecrement[2]{};
+    Button*         pCountStart{};
+    Button*         pCountStop{};
     QLabel*         pTimeoutLabel{};
-    QLabel*         pSetsLabel{};
     QLabel*         pScoreLabel{};
 
     QPushButton*  pNewSetButton{};
@@ -112,5 +111,7 @@ private:
     int             maxTeamNameLen;
     QTimer          startTime;
     QTimer          updateTime;
+    QElapsedTimer   tempoTime;
+    int             remainingMilliSeconds;
 };
 

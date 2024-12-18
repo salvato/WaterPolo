@@ -29,5 +29,6 @@
         <file>buttonIcons/Plus.png</file>
         <file>buttonIcons/sign_stop.png</file>
         <file>buttonIcons/video-display.png</file>
+        <file>buttonIcons/Go.png</file>
     </qresource>
 </RCC>

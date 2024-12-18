@@ -72,6 +72,7 @@ DISTFILES += \
     buttonIcons/Camera.png \
     buttonIcons/ExchangeVolleyField.png \
     buttonIcons/GeneralSetup.png \
+    buttonIcons/Go.png \
     buttonIcons/Minus.png \
     buttonIcons/New-Game-Volley.png \
     buttonIcons/New-Set-Volley.png \

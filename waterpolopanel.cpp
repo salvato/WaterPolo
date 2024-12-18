@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QProcess>
 #include <QCloseEvent>
 #include <QGridLayout>
+#include <QGuiApplication>
 
 
 WaterPoloPanel::WaterPoloPanel(QFile *myLogFile, QWidget *parent)

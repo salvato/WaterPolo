@@ -27,8 +27,8 @@ public:
 
 public:
     int maxTimeout;
-    int maxSet;
-    int iTimeoutDuration;
+    int maxPeriods;
+    int iTimeDuration;
 
     bool isPanelMirrored;
 

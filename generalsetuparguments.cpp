@@ -23,8 +23,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 GeneralSetupArguments::GeneralSetupArguments()
     : maxTimeout(2)
-    , maxSet(3)
-    , iTimeoutDuration(30) //In seconds
+    , maxPeriods(4)
+    , iTimeDuration(8) //In minutes
     // The default Directories to look for the slides and spots
     , sSlideDir(QStandardPaths::writableLocation(QStandardPaths::PicturesLocation))
     , sSpotDir(QStandardPaths::writableLocation(QStandardPaths::MoviesLocation))
