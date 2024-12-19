@@ -331,6 +331,12 @@ WaterPoloCtrl::disableUi() {
     pTimeEdit->setDisabled(true);
     pPeriodIncrement->setDisabled(true);
     pPeriodDecrement->setDisabled(true);
+
+    pNewPeriodButton->setDisabled(true);
+    pNewGameButton->setDisabled(true);
+    pChangeFieldButton->setDisabled(true);
+
+    disableGeneralButtons();
 }
 
 
@@ -349,6 +355,12 @@ WaterPoloCtrl::enableUi() {
     pTimeEdit->setEnabled(true);
     pPeriodIncrement->setEnabled(true);
     pPeriodDecrement->setEnabled(true);
+
+    pNewPeriodButton->setEnabled(true);
+    pNewGameButton->setEnabled(true);
+    pChangeFieldButton->setEnabled(true);
+
+    enableGeneralButtons();
 }
 
 
@@ -853,43 +865,55 @@ WaterPoloCtrl::exchangeField() {
 
 void
 WaterPoloCtrl::onButtonNewPeriodClicked() {
+    if(iPeriod == gsArgs.maxPeriods)
+        return;
     int iRes = QMessageBox::question(this, tr("WaterPolo_Controller"),
-                                     tr("Vuoi davvero iniziare un nuovo Set ?"),
+                                     tr("Vuoi davvero iniziare un nuovo Periodo ?"),
                                      QMessageBox::Yes | QMessageBox::No,
                                      QMessageBox::No);
     if(iRes != QMessageBox::Yes) return;
-    startNewSet();
+    startNewPeriod();
 }
 
 
 void
-WaterPoloCtrl::startNewSet(){
-    // Exchange team's order in the field
-    QString sText = gsArgs.sTeam[0];
-    gsArgs.sTeam[0] = gsArgs.sTeam[1];
-    gsArgs.sTeam[1] = sText;
-    pTeamName[0]->setText(gsArgs.sTeam[0]);
-    pTeamName[1]->setText(gsArgs.sTeam[1]);
-
-    sText = gsArgs.sTeamLogoFilePath[0];
-    gsArgs.sTeamLogoFilePath[0] = gsArgs.sTeamLogoFilePath[1];
-    gsArgs.sTeamLogoFilePath[1] = sText;
-
-    for(int iTeam=0; iTeam<2; iTeam++) {
-        iTimeout[iTeam] = 0;
-        sText = QString("%1").arg(iTimeout[iTeam], 1);
-        pTimeoutEdit[iTeam]->setText(sText);
-        pTimeoutEdit[iTeam]->setStyleSheet("background-color: rgba(0, 0, 0, 0);color:yellow; border: none");
-        iScore[iTeam]   = 0;
-        sText = QString("%1").arg(iScore[iTeam], 2);
-        pScoreEdit[iTeam]->setText(sText);
-        pTimeoutDecrement[iTeam]->setEnabled(false);
-        pTimeoutIncrement[iTeam]->setEnabled(true);
-        pScoreDecrement[iTeam]->setEnabled(false);
-        pScoreIncrement[iTeam]->setEnabled(true);
+WaterPoloCtrl::startNewPeriod() {
+    iPeriod++;
+    if(iPeriod >= gsArgs.maxPeriods) {
+        pPeriodIncrement->setEnabled(false);
     }
-    sendAll();
-    SaveStatus();
+    pPeriodDecrement->setEnabled(true);
+    QString sText = QString("%1").arg(iPeriod);
+    pPeriodEdit->setText(sText);
+    if(iPeriod == 3) { //Le squadre compresi i giocatori, allenatori e dirigenti,
+                       // cambiano campo prima dell’inizio del 3° tempo.
+        // Exchange team's order in the field
+        QString sText = gsArgs.sTeam[0];
+        gsArgs.sTeam[0] = gsArgs.sTeam[1];
+        gsArgs.sTeam[1] = sText;
+        pTeamName[0]->setText(gsArgs.sTeam[0]);
+        pTeamName[1]->setText(gsArgs.sTeam[1]);
+
+        sText = gsArgs.sTeamLogoFilePath[0];
+        gsArgs.sTeamLogoFilePath[0] = gsArgs.sTeamLogoFilePath[1];
+        gsArgs.sTeamLogoFilePath[1] = sText;
+
+        for(int iTeam=0; iTeam<2; iTeam++) {
+            iTimeout[iTeam] = 0;
+            sText = QString("%1").arg(iTimeout[iTeam], 1);
+            pTimeoutEdit[iTeam]->setText(sText);
+            pTimeoutEdit[iTeam]->setStyleSheet("background-color: rgba(0, 0, 0, 0);color:yellow; border: none");
+            iScore[iTeam]   = 0;
+            sText = QString("%1").arg(iScore[iTeam], 2);
+            pScoreEdit[iTeam]->setText(sText);
+            pTimeoutDecrement[iTeam]->setEnabled(false);
+            pTimeoutIncrement[iTeam]->setEnabled(true);
+            pScoreDecrement[iTeam]->setEnabled(false);
+            pScoreIncrement[iTeam]->setEnabled(true);
+        }
+        sendAll();
+        SaveStatus();
+    }
 }
 
 
@@ -953,22 +977,6 @@ WaterPoloCtrl::processBtMessage(QString sMessage) {
     if(sToken != sNoData){
         onTeamTextChanged(sToken.left(maxTeamNameLen), 1);
     }// team 1 name
-
-    // sToken = XML_Parse(sMessage, "incset");
-    // if(sToken != sNoData) {
-    //     iTeam = sToken.toInt(&ok);
-    //     if(!ok || (iTeam<0) || (iTeam>1))
-    //         return;
-    //     onSetIncrement(iTeam);
-    // }// increment set
-
-    // sToken = XML_Parse(sMessage, "decset");
-    // if(sToken != sNoData){
-    //     iTeam = sToken.toInt(&ok);
-    //     if(!ok || (iTeam<0) || (iTeam>1))
-    //         return;
-    //     onSetDecrement(iTeam);
-    // }// decrement set
 
     sToken = XML_Parse(sMessage, "inctimeout");
     if(sToken != sNoData){
@@ -1035,9 +1043,9 @@ WaterPoloCtrl::processBtMessage(QString sMessage) {
         exchangeField();
     }// Change Field
 
-    sToken = XML_Parse(sMessage, "newSet");
+    sToken = XML_Parse(sMessage, "newPeriod");
     if(sToken != sNoData) {
-        startNewSet();
+        startNewPeriod();
     }// Change Field
 
 }

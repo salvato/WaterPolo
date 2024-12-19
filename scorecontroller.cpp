@@ -389,6 +389,24 @@ ScoreController::UpdateUI() {
 
 
 void
+ScoreController::disableGeneralButtons() {
+    pSpotButton->setDisabled(true);
+    pSlideShowButton->setDisabled(true);
+    pGeneralSetupButton->setDisabled(true);
+    pShutdownButton->setDisabled(true);
+}
+
+
+void
+ScoreController::enableGeneralButtons() {
+    pSpotButton->setEnabled(true);
+    pSlideShowButton->setEnabled(true);
+    pGeneralSetupButton->setEnabled(true);
+    pShutdownButton->setEnabled(true);
+}
+
+
+void
 ScoreController::onButtonSpotLoopClicked() {
     QPixmap pixmap;
     QIcon ButtonIcon;

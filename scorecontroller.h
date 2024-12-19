@@ -76,6 +76,8 @@ protected:
     void            stopSlideShow();
     bool            startSpotLoop();
     void            stopSpotLoop();
+    void            disableGeneralButtons();
+    void            enableGeneralButtons();
     virtual void    SaveStatus();
     virtual void    GeneralSetup();
     void            doProcessCleanup();

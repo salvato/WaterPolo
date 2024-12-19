@@ -83,7 +83,7 @@ private:
     void          btSendAll();
     void          processBtMessage(QString sMessage);
     void          exchangeField();
-    void          startNewSet();
+    void          startNewPeriod();
     void          disableUi();
     void          enableUi();
 
