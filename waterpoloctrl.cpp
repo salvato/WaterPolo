@@ -247,9 +247,9 @@ WaterPoloCtrl::CreateGamePanel() {
     gamePanel->addWidget(pTimeEdit,   iRow, 5, 3, 2, Qt::AlignVCenter);
     gamePanel->addWidget(pCountStop,  iRow, 7, 3, 1, Qt::AlignLeft|Qt::AlignVCenter);
     iRow += 1;
-    gamePanel->addWidget(pPeriodDecrement, iRow, 0, 2, 1, Qt::AlignHCenter|Qt::AlignVCenter);
+    //gamePanel->addWidget(pPeriodDecrement, iRow, 0, 2, 1, Qt::AlignHCenter|Qt::AlignVCenter);
     gamePanel->addWidget(pPeriodEdit,      iRow, 1, 2, 1, Qt::AlignHCenter|Qt::AlignVCenter);
-    gamePanel->addWidget(pPeriodIncrement, iRow, 2, 2, 1, Qt::AlignHCenter|Qt::AlignVCenter);
+    //gamePanel->addWidget(pPeriodIncrement, iRow, 2, 2, 1, Qt::AlignHCenter|Qt::AlignVCenter);
     iRow += 2;
     gamePanel->addWidget(pTimeoutLabel, iRow, 3, 1, 2);
 
@@ -878,8 +878,11 @@ WaterPoloCtrl::exchangeField() {
 
 void
 WaterPoloCtrl::onButtonNewPeriodClicked() {
-    if(iPeriod == gsArgs.maxPeriods)
+    if(iPeriod == gsArgs.maxPeriods) {
+        QMessageBox::information(this, tr("WaterPolo_Controller"),
+                                         tr("Massimo Numero di periodi Raggiunto"));
         return;
+    }
     int iRes = QMessageBox::question(this, tr("WaterPolo_Controller"),
                                      tr("Vuoi davvero iniziare un nuovo Periodo ?"),
                                      QMessageBox::Yes | QMessageBox::No,
@@ -924,9 +927,19 @@ WaterPoloCtrl::startNewPeriod() {
             pScoreDecrement[iTeam]->setEnabled(false);
             pScoreIncrement[iTeam]->setEnabled(true);
         }
-        sendAll();
-        SaveStatus();
     }
+    remainingMilliSeconds = gsArgs.iTimeDuration * 60000;
+    runMilliSeconds = 0;
+
+    QString sRemainingTime;
+    lldiv_t iRes = div(remainingMilliSeconds+999, 60000LL);
+    int iMinutes = int(iRes.quot);
+    int iSeconds = int(iRes.rem/1000);
+    sRemainingTime = QString("%1:%2").arg(iMinutes, 1)
+                         .arg(iSeconds, 2, 10, QChar('0'));
+    pTimeEdit->setText(sRemainingTime);
+    sendAll();
+    SaveStatus();
 }
 
 
