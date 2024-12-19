@@ -885,7 +885,7 @@ WaterPoloCtrl::startNewPeriod() {
     pPeriodDecrement->setEnabled(true);
     QString sText = QString("%1").arg(iPeriod);
     pPeriodEdit->setText(sText);
-    if(iPeriod == 3) { //Le squadre compresi i giocatori, allenatori e dirigenti,
+    if(iPeriod == 3) { // Le squadre compresi i giocatori, allenatori e dirigenti,
                        // cambiano campo prima dell’inizio del 3° tempo.
         // Exchange team's order in the field
         QString sText = gsArgs.sTeam[0];
@@ -919,11 +919,11 @@ WaterPoloCtrl::startNewPeriod() {
 
 void
 WaterPoloCtrl::onButtonNewGameClicked() {
-    int iRes = QMessageBox::question(this, tr("Volley_Controller"),
+    int iResponse = QMessageBox::question(this, tr("WaterPolo_Controller"),
                                      tr("Iniziare una Nuova Partita ?"),
                                      QMessageBox::Yes | QMessageBox::No,
                                      QMessageBox::No);
-    if(iRes != QMessageBox::Yes) return;
+    if(iResponse != QMessageBox::Yes) return;
 
     gsArgs.sTeam[0]    = tr("Locali");
     gsArgs.sTeam[1]    = tr("Ospiti");
@@ -942,6 +942,17 @@ WaterPoloCtrl::onButtonNewGameClicked() {
         pScoreDecrement[iTeam]->setEnabled(false);
         pScoreIncrement[iTeam]->setEnabled(true);
     }
+    iPeriod = 1;
+    pPeriodEdit->setText(QString("%1").arg(iPeriod));
+    remainingMilliSeconds = gsArgs.iTimeDuration * 60000;
+    runMilliSeconds = 0;
+    QString sRemainingTime;
+    lldiv_t iRes = div(remainingMilliSeconds+999, 60000LL);
+    int iMinutes = int(iRes.quot);
+    int iSeconds = int(iRes.rem/1000);
+    sRemainingTime = QString("%1:%2").arg(iMinutes, 1)
+                         .arg(iSeconds, 2, 10, QChar('0'));
+    pTimeEdit->setText(sRemainingTime);
     sendAll();
     SaveStatus();
 }
