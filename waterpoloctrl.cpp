@@ -570,13 +570,16 @@ WaterPoloCtrl::onTimeUpdate() {
             pCountStop->setDisabled(true);
             timeToStop = 0;
             tempoTime.invalidate();
+            // TODO: Riabilitare il resto dell'interfaccia utente
         }
         QString sRemainingTime;
-        lldiv_t iRes = div(timeToStop, qint64(60000));
-        sRemainingTime = QString("%1:%2").arg(iRes.quot, 1)
-                             .arg(int(iRes.rem), 2, 10, QChar('0'));
+        lldiv_t iRes = div(timeToStop+999, 60000LL);
+        int iMinutes = int(iRes.quot);
+        int iSeconds = int(iRes.rem/1000);
+        sRemainingTime = QString("%1:%2").arg(iMinutes, 1)
+                             .arg(iSeconds, 2, 10, QChar('0'));
         pTimeEdit->setText(sRemainingTime);
-        // Send the Updated Time;
+        // TODO: Send the Updated Time;
     }
 }
 
@@ -631,6 +634,7 @@ WaterPoloCtrl::onCountStart(int iTeam) {
     tempoTime.restart();
     pCountStart->setDisabled(true);
     pCountStop->setEnabled(true);
+    // TODO: Disabilitare il resto dell'interfaccia utente
 }
 
 
@@ -641,6 +645,7 @@ WaterPoloCtrl::onCountStop(int iTeam) {
     tempoTime.invalidate();
     pCountStart->setEnabled(true);
     pCountStop->setDisabled(true);
+    // TODO: Riabilitare il resto dell'interfaccia utente
 }
 
 

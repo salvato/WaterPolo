@@ -112,9 +112,7 @@ private:
     QTimer          startTime;
     QTimer          updateTime;
     QElapsedTimer   tempoTime;
-    // qint64          startMilli;
-    // qint64          stopMilli;
-     qint64          runMilli;
+    qint64          runMilli;
     qint64          remainingMilliSeconds;
 };
 
