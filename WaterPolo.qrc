@@ -30,5 +30,7 @@
         <file>buttonIcons/sign_stop.png</file>
         <file>buttonIcons/video-display.png</file>
         <file>buttonIcons/Go.png</file>
+        <file>Logo_SSD_UniMe.png</file>
+        <file>Logo_UniMe.png</file>
     </qresource>
 </RCC>

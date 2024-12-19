@@ -83,9 +83,10 @@ WaterPoloCtrl::WaterPoloCtrl(QFile *myLogFile, QWidget *parent)
 
 void
 WaterPoloCtrl::closeEvent(QCloseEvent *event) {
+    updateTimer.stop();
     SaveSettings();
-    if(pWaterPoloPanel) delete pWaterPoloPanel;
     ScoreController::closeEvent(event);
+    if(pWaterPoloPanel) delete pWaterPoloPanel;
     event->accept();
 }
 
@@ -125,6 +126,14 @@ WaterPoloCtrl::GeneralSetup() {
         if(!spotDir.exists()) {
             gsArgs.sSpotDir = QStandardPaths::displayName(QStandardPaths::MoviesLocation);
         }
+        remainingMilliSeconds = gsArgs.iTimeDuration * 60000;
+        QString sRemainingTime;
+        lldiv_t iRes = div(remainingMilliSeconds+999, 60000LL);
+        int iMinutes = int(iRes.quot);
+        int iSeconds = int(iRes.rem/1000);
+        sRemainingTime = QString("%1:%2").arg(iMinutes, 1)
+                             .arg(iSeconds, 2, 10, QChar('0'));
+        pTimeEdit->setText(sRemainingTime);
         SaveSettings();
         sendAll();
     }
@@ -303,6 +312,7 @@ WaterPoloCtrl::GetSettings() {
     iPeriod     = pSettings->value("game/period", 1).toInt();
 
     remainingMilliSeconds = gsArgs.iTimeDuration * 60000;
+    runMilliSeconds = 0;
 
     // Check Stored Values vs Maximum Values
     for(int i=0; i<2; i++) {
@@ -374,6 +384,8 @@ WaterPoloCtrl::sendAll() {
     pWaterPoloPanel->setLogo(0, gsArgs.sTeamLogoFilePath[0]);
     pWaterPoloPanel->setLogo(1, gsArgs.sTeamLogoFilePath[1]);
     pWaterPoloPanel->setMirrored(gsArgs.isPanelMirrored);
+    pWaterPoloPanel->setPeriod(iPeriod);
+    pWaterPoloPanel->setTime(pTimeEdit->text());
     btSendAll();
 }
 
@@ -629,10 +641,11 @@ WaterPoloCtrl::onTimeUpdate() {
         lldiv_t iRes = div(timeToStop+999, 60000LL);
         int iMinutes = int(iRes.quot);
         int iSeconds = int(iRes.rem/1000);
-        sRemainingTime = QString("%1:%2").arg(iMinutes, 1)
+        sRemainingTime = QString("%1:%2")
+                             .arg(iMinutes, 1)
                              .arg(iSeconds, 2, 10, QChar('0'));
         pTimeEdit->setText(sRemainingTime);
-        // TODO: Send the Updated Time;
+        pWaterPoloPanel->setTime(sRemainingTime);
     }
 }
 
@@ -644,7 +657,7 @@ WaterPoloCtrl::onPeriodIncrement(int) {
         pPeriodIncrement->setEnabled(false);
     }
     pPeriodDecrement->setEnabled(true);
-    // TODO: pWaterPoloPanel->setPeriod(iPeriod);
+    pWaterPoloPanel->setPeriod(iPeriod);
     QString sMessage = QString("<period>%1</period>")
                            .arg(iPeriod);
     pBtServer->sendMessage(sMessage);
@@ -663,7 +676,7 @@ WaterPoloCtrl::onPeriodDecrement(int) {
         pPeriodDecrement->setEnabled(false);
     }
     pPeriodIncrement->setEnabled(true);
-    // TODO: pWaterPoloPanel->setPeriod(iPeriod);
+    pWaterPoloPanel->setPeriod(iPeriod);
     QString sMessage = QString("<period>%1</period>")
                            .arg(iPeriod);
     pBtServer->sendMessage(sMessage);

@@ -42,14 +42,12 @@ WaterPoloPanel::WaterPoloPanel(QFile *myLogFile, QWidget *parent)
                                 int(panelSize.width()/(2.2*maxTeamNameLen)));
     iScoreFontSize   = std::min(panelSize.height()/5,
                                 int(panelSize.width()/10));
+    iTimeFontSize    = std::min(panelSize.height()/5,
+                                int(panelSize.width()/10));
     iLabelsFontSize  = panelSize.height()/8; // 2 Righe
     iTimeoutFontSize = panelSize.height()/8; // 2 Righe
     iSetFontSize     = panelSize.height()/8; // 2 Righe
 
-    // QWidget propagates explicit palette roles from parent to child.
-    // If you assign a brush or color to a specific role on a palette and
-    // assign that palette to a widget, that role will propagate to all
-    // the widget's children, overriding any system defaults for that role.
     panelPalette = QWidget::palette();
     panelGradient = QLinearGradient(0.0, 0.0, 0.0, height());
     panelGradient.setColorAt(0, QColor(0, 0, START_GRADIENT));
@@ -86,8 +84,14 @@ WaterPoloPanel::setScore(int iTeam, int iScore) {
 
 
 void
-WaterPoloPanel::setSets(int iTeam, int iSets) {
-    pSet[iTeam]->setText(QString("%1").arg(iSets));
+WaterPoloPanel::setTime(QString sTime) {
+    pTimeLabel->setText(sTime);
+}
+
+
+void
+WaterPoloPanel::setPeriod(int iPeriod) {
+    pPeriod->setText(QString("%1").arg(iPeriod));
 }
 
 
@@ -140,9 +144,6 @@ WaterPoloPanel::createPanelElements() {
     }
 
     // Score
-    pScoreLabel = new QLabel(tr(" "));
-    pScoreLabel->setFont(QFont(sFontName, iLabelsFontSize, fontWeight));
-    pScoreLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     for(int i=0; i<2; i++){
         pScore[i] = new QLabel("88");
         pScore[i]->setAlignment(Qt::AlignHCenter);
@@ -150,11 +151,20 @@ WaterPoloPanel::createPanelElements() {
         pScore[i]->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     }
 
-    // Servizio
-    for(int i=0; i<2; i++){
-        pServizio[i] = new QLabel(" ");
-        pServizio[i]->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    }
+    // Period
+    pPeriodLabel = new QLabel(tr("Periodo"));
+    pPeriodLabel->setFont(QFont(sFontName, iLabelsFontSize/3, fontWeight));
+    pPeriodLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    pPeriod = new QLabel("1");
+    pPeriod->setAlignment(Qt::AlignHCenter);
+    pPeriod->setFont(QFont(sFontName, iScoreFontSize, fontWeight));
+    pPeriod->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
+    // Time
+    pTimeLabel = new QLabel(tr("0:00"));
+    pTimeLabel->setAlignment(Qt::AlignHCenter);
+    pTimeLabel->setFont(QFont(sFontName, iTimeFontSize, fontWeight));
+    pTimeLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     // Loghi
     for(int i=0; i<2; i++){
@@ -175,7 +185,7 @@ WaterPoloPanel::createPanelElements() {
     pTeam[1]->setText(tr("Ospiti"));
 
     // Copyright
-    pCopyRight = new QLabel("© Gabriele Salvato (2024)");
+    pCopyRight = new QLabel("© Gabriele Salvato (2025)");
     pCopyRight->setPalette(pal);
     pCopyRight->setFont(QFont(sFontName, iTeamFontSize/2, fontWeight));
     pCopyRight->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -197,22 +207,24 @@ WaterPoloPanel::createPanel() {
     layout->addWidget(pTeam[iright],     0, 6, 2, 6, Qt::AlignHCenter|Qt::AlignVCenter);
 
     layout->addWidget(pScore[ileft],     2, 1, 4, 3, Qt::AlignHCenter|Qt::AlignVCenter);
-    layout->addWidget(pServizio[ileft],  2, 4, 4, 1, Qt::AlignLeft   |Qt::AlignTop);
-    layout->addWidget(pScoreLabel,       2, 5, 4, 2, Qt::AlignHCenter|Qt::AlignVCenter);
-    layout->addWidget(pServizio[iright], 2, 7, 4, 1, Qt::AlignRight  |Qt::AlignTop);
+    layout->addWidget(pPeriodLabel,      2, 4, 1, 4, Qt::AlignHCenter|Qt::AlignVCenter);
     layout->addWidget(pScore[iright],    2, 8, 4, 3, Qt::AlignHCenter|Qt::AlignVCenter);
 
-    layout->addWidget(pSet[ileft],       6, 3, 2, 1, Qt::AlignHCenter|Qt::AlignVCenter);
-    layout->addWidget(pSetLabel,         6, 4, 2, 4, Qt::AlignHCenter|Qt::AlignVCenter);
-    layout->addWidget(pSet[iright],      6, 8, 2, 1, Qt::AlignHCenter|Qt::AlignVCenter);
+    layout->addWidget(logoLabel[ileft],  6, 0, 4, 4, Qt::AlignHCenter|Qt::AlignVCenter);
+    layout->addWidget(pTimeLabel,        6, 4, 4, 4, Qt::AlignHCenter|Qt::AlignVCenter);
+    layout->addWidget(logoLabel[iright], 6, 8, 4, 4, Qt::AlignHCenter|Qt::AlignVCenter);
 
-    layout->addWidget(logoLabel[ileft],  6, 0, 4, 3, Qt::AlignHCenter|Qt::AlignVCenter);
-    layout->addWidget(pTimeout[ileft],   8, 3, 2, 1, Qt::AlignHCenter|Qt::AlignVCenter);
-    layout->addWidget(pTimeoutLabel,     8, 4, 2, 4, Qt::AlignHCenter|Qt::AlignVCenter);
-    layout->addWidget(pTimeout[iright],  8, 8, 2, 1, Qt::AlignHCenter|Qt::AlignVCenter);
-    layout->addWidget(logoLabel[iright], 6, 9, 4, 3, Qt::AlignHCenter|Qt::AlignVCenter);
+    layout->addWidget(pPeriod,           3, 5, 4, 2,Qt::AlignHCenter|Qt::AlignVCenter);
 
-    layout->addWidget(pCopyRight,       10, 6, 1, 6, Qt::AlignRight  |Qt::AlignVCenter);
+    // layout->addWidget(pSet[ileft],       6, 3, 2, 1, Qt::AlignHCenter|Qt::AlignVCenter);
+    // layout->addWidget(pSetLabel,         6, 4, 2, 4, Qt::AlignHCenter|Qt::AlignVCenter);
+    // layout->addWidget(pSet[iright],      6, 8, 2, 1, Qt::AlignHCenter|Qt::AlignVCenter);
+
+    layout->addWidget(pTimeout[ileft],   10, 3, 2, 1, Qt::AlignHCenter|Qt::AlignVCenter);
+    layout->addWidget(pTimeoutLabel,     10, 4, 2, 4, Qt::AlignHCenter|Qt::AlignVCenter);
+    layout->addWidget(pTimeout[iright],  10, 8, 2, 1, Qt::AlignHCenter|Qt::AlignVCenter);
+
+    layout->addWidget(pCopyRight,        11, 6, 1, 6, Qt::AlignRight  |Qt::AlignVCenter);
 
     return layout;
 }

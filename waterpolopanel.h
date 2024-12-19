@@ -32,7 +32,8 @@ public:
     void changeEvent(QEvent *event);
     void setTeam(int iTeam, QString sTeamName);
     void setScore(int iTeam, int iScore);
-    void setSets(int iTeam, int iSets);
+    void setTime(QString sTime);
+    void setPeriod(int iPeriod);
     void setTimeout(int iTeam, int iTimeout);
     void setMirrored(bool isPanelMirrored);
     bool getMirrored();
@@ -46,9 +47,11 @@ private:
     QLabel*           pTeam[2];
     QLabel*           pScore[2];
     QLabel*           pScoreLabel;
+    QLabel*           pTimeLabel;
+    QLabel*           pPeriodLabel;
+    QLabel*           pPeriod;
     QLabel*           pSet[2];
     QLabel*           pSetLabel;
-    QLabel*           pServizio[2];
     QLabel*           pTimeout[2];
     QLabel*           pTimeoutLabel;
     QLabel*           logoLabel[2];
@@ -64,6 +67,7 @@ private:
     int               iTimeoutFontSize;
     int               iSetFontSize;
     int               iScoreFontSize;
+    int               iTimeFontSize;
     int               iTeamFontSize;
     int               iLabelsFontSize;
     int               maxTeamNameLen;
