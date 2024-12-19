@@ -197,18 +197,20 @@ SlideWidget::updateSlideList() {
 
 bool
 SlideWidget::prepareNextSlide() {
-    QImage newImage(slideList.at(iCurrentSlide).absoluteFilePath());
-    image = newImage.scaled(pBaseImage->size(),
-                            Qt::KeepAspectRatio).mirrored();
-    QPainter painter(pBaseImage);
-    painter.fillRect(pBaseImage->rect(), Qt::white);
-    int x = (pBaseImage->width()  - image.width())  / 2;
-    int y = (pBaseImage->height() - image.height()) / 2;
-    painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
-    painter.drawImage(x, y, image);
-    painter.end();
+    if(!slideList.isEmpty()) {
+        QImage newImage(slideList.at(iCurrentSlide).absoluteFilePath());
+        image = newImage.scaled(pBaseImage->size(),
+                                Qt::KeepAspectRatio).mirrored();
+        QPainter painter(pBaseImage);
+        painter.fillRect(pBaseImage->rect(), Qt::white);
+        int x = (pBaseImage->width()  - image.width())  / 2;
+        int y = (pBaseImage->height() - image.height()) / 2;
+        painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
+        painter.drawImage(x, y, image);
+        painter.end();
 
-    iCurrentSlide = (iCurrentSlide + 1) % slideList.count();
+        iCurrentSlide = (iCurrentSlide + 1) % slideList.count();
+    }
     return true;
 }
 

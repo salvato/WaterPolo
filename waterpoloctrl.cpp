@@ -83,10 +83,13 @@ WaterPoloCtrl::WaterPoloCtrl(QFile *myLogFile, QWidget *parent)
 
 void
 WaterPoloCtrl::closeEvent(QCloseEvent *event) {
+    updateTimer.disconnect();
     updateTimer.stop();
     SaveSettings();
     ScoreController::closeEvent(event);
-    if(pWaterPoloPanel) delete pWaterPoloPanel;
+    if(pWaterPoloPanel) {
+        pWaterPoloPanel->deleteLater();
+    }
     event->accept();
 }
 
@@ -278,7 +281,7 @@ WaterPoloCtrl::CreateGameButtons() {
     pNewPeriodButton  = new QPushButton(*pPixmap, "");
     pNewPeriodButton->setIconSize(iconSize);
     pNewPeriodButton->setFlat(true);
-    pNewPeriodButton->setToolTip("Nuovo Set");
+    pNewPeriodButton->setToolTip("Nuovo Periodo");
 
     delete pPixmap;
 
@@ -619,6 +622,7 @@ WaterPoloCtrl::setEventHandlers() {
 
 void
 WaterPoloCtrl::onAppStart() {
+    startTimer.stop();
     sendAll();
     updateTimer.start(20);
 }
