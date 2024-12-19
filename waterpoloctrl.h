@@ -62,6 +62,8 @@ private slots:
     void onAppStart();
     void onTimeUpdate();
     void closeEvent(QCloseEvent*);
+    void onPeriodIncrement(int);
+    void onPeriodDecrement(int);
     void onTimeOutIncrement(int iTeam);
     void onTimeOutDecrement(int iTeam);
     void onCountStart(int iTeam);
@@ -70,7 +72,7 @@ private slots:
     void onScoreDecrement(int iTeam);
     void onTeamTextChanged(QString sText, int iTeam);
     void onButtonChangeFieldClicked();
-    void onButtonNewSetClicked();
+    void onButtonNewPeriodClicked();
     void onButtonNewGameClicked();
     void onChangePanelOrientation(PanelOrientation orientation);
 
@@ -82,15 +84,21 @@ private:
     void          processBtMessage(QString sMessage);
     void          exchangeField();
     void          startNewSet();
+    void          disableUi();
+    void          enableUi();
 
 private:
     WaterPoloPanel* pWaterPoloPanel;
     int             iTimeout[2]{};
     int             iScore[2]{};
+    int             iPeriod;
     Edit*           pTeamName[2]{};
     Edit*           pTimeoutEdit[2]{};
     Edit*           pScoreEdit[2]{};
+    Edit*           pPeriodEdit{};
     Edit*           pTimeEdit{};
+    Button*         pPeriodIncrement;
+    Button*         pPeriodDecrement;
     Button*         pTimeoutIncrement[2]{};
     Button*         pTimeoutDecrement[2]{};
     Button*         pScoreIncrement[2]{};
@@ -99,20 +107,21 @@ private:
     Button*         pCountStop{};
     QLabel*         pTimeoutLabel{};
     QLabel*         pScoreLabel{};
+    QLabel*         pPeriodLabel{};
 
-    QPushButton*  pNewSetButton{};
-    QPushButton*  pNewGameButton{};
-    QPushButton*  pChangeFieldButton{};
+    QPushButton*    pNewPeriodButton{};
+    QPushButton*    pNewGameButton{};
+    QPushButton*    pChangeFieldButton{};
 
     bool            bFontBuilt;
     QPalette        panelPalette;
     QLinearGradient panelGradient;
     QBrush          panelBrush;
     int             maxTeamNameLen;
-    QTimer          startTime;
-    QTimer          updateTime;
-    QElapsedTimer   tempoTime;
-    qint64          runMilli;
+    QTimer          startTimer;
+    QTimer          updateTimer;
+    QElapsedTimer   tempoTimer;
+    qint64          runMilliSeconds;
     qint64          remainingMilliSeconds;
 };
 
