@@ -903,6 +903,8 @@ WaterPoloCtrl::startNewPeriod() {
         pPeriodIncrement->setEnabled(false);
     }
     pPeriodDecrement->setEnabled(true);
+    pCountStart->setEnabled(true);
+    pCountStop->setDisabled(true);
     QString sText = QString("%1").arg(iPeriod);
     pPeriodEdit->setText(sText);
     if(iPeriod == 3) { // Le squadre compresi i giocatori, allenatori e dirigenti,
