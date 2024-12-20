@@ -70,6 +70,7 @@ DISTFILES += \
     .gitignore \
     Logo_UniMe2.png \
     Note.txt \
+    Waterpolo.odt \
     buttonIcons/Camera.png \
     buttonIcons/ExchangeVolleyField.png \
     buttonIcons/GeneralSetup.png \
