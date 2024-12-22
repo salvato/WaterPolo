@@ -37,16 +37,18 @@ WaterPoloPanel::WaterPoloPanel(QFile *myLogFile, QWidget *parent)
     sFontName = QString("Liberation Sans Bold");
     fontWeight = QFont::Black;
 
+    //Matrice di 9 Righe x X Colonne
     QSize panelSize = QGuiApplication::primaryScreen()->geometry().size();
-    iTeamFontSize    = std::min(panelSize.height()/8,
+    int iRowSize = panelSize.height()/9;
+    iTeamFontSize    = std::min(iRowSize,
                                 int(panelSize.width()/(2.2*maxTeamNameLen)));
-    iScoreFontSize   = std::min(panelSize.height()/5,
+    iScoreFontSize   = std::min(3*iRowSize,
                                 int(panelSize.width()/10));
-    iTimeFontSize    = std::min(panelSize.height()/5,
-                                int(panelSize.width()/10));
-    iLabelsFontSize  = panelSize.height()/8; // 2 Righe
-    iTimeoutFontSize = panelSize.height()/8; // 2 Righe
-    iSetFontSize     = panelSize.height()/8; // 2 Righe
+    iTimeFontSize    = std::min(5*iRowSize,
+                                int(panelSize.width()/6));
+    iLabelsFontSize  = iRowSize;
+    iLogoSize = iTimeFontSize;
+    // iTimeoutFontSize =iTeamFontSize
 
     panelPalette = QWidget::palette();
     panelGradient = QLinearGradient(0.0, 0.0, 0.0, height());
@@ -95,10 +97,10 @@ WaterPoloPanel::setPeriod(int iPeriod) {
 }
 
 
-void
-WaterPoloPanel::setTimeout(int iTeam, int iTimeout) {
-    pTimeout[iTeam]->setText(QString("%1").arg(iTimeout));
-}
+// void
+// WaterPoloPanel::setTimeout(int iTeam, int iTimeout) {
+//     pTimeout[iTeam]->setText(QString("%1").arg(iTimeout));
+// }
 
 
 void
@@ -124,24 +126,14 @@ WaterPoloPanel::closeEvent(QCloseEvent *event) {
 void
 WaterPoloPanel::createPanelElements() {
     // Timeout
-    pTimeoutLabel = new QLabel("Timeout");
-    pTimeoutLabel->setFont(QFont(sFontName, iLabelsFontSize/2, fontWeight));
-    pTimeoutLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    for(int i=0; i<2; i++) {
-        pTimeout[i] = new QLabel("8");
-        pTimeout[i]->setFrameStyle(QFrame::NoFrame);
-        pTimeout[i]->setFont(QFont(sFontName, iTimeoutFontSize, fontWeight));
-    }
-
-    // Set
-    pSetLabel = new QLabel(tr("Set"));
-    pSetLabel->setFont(QFont(sFontName, iLabelsFontSize/2, fontWeight));
-    pSetLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    for(int i=0; i<2; i++) {
-        pSet[i] = new QLabel("8");
-        pSet[i]->setFrameStyle(QFrame::NoFrame);
-        pSet[i]->setFont(QFont(sFontName, iSetFontSize, fontWeight));
-    }
+    // pTimeoutLabel = new QLabel("Timeout");
+    // pTimeoutLabel->setFont(QFont(sFontName, iLabelsFontSize/2, fontWeight));
+    // pTimeoutLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    // for(int i=0; i<2; i++) {
+    //     pTimeout[i] = new QLabel("8");
+    //     pTimeout[i]->setFrameStyle(QFrame::NoFrame);
+    //     pTimeout[i]->setFont(QFont(sFontName, iTimeoutFontSize, fontWeight));
+    // }
 
     // Score
     for(int i=0; i<2; i++){
@@ -157,7 +149,7 @@ WaterPoloPanel::createPanelElements() {
     pPeriodLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     pPeriod = new QLabel("1");
     pPeriod->setAlignment(Qt::AlignHCenter);
-    pPeriod->setFont(QFont(sFontName, iScoreFontSize, fontWeight));
+    pPeriod->setFont(QFont(sFontName, iLabelsFontSize, fontWeight));
     pPeriod->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     // Time
@@ -194,7 +186,7 @@ WaterPoloPanel::createPanelElements() {
 
 QGridLayout*
 WaterPoloPanel::createPanel() {
-    QGridLayout *layout = new QGridLayout();
+    QGridLayout *layout = new QGridLayout(); // 9 Righe x X Colonne
 
     int ileft  = 0;
     int iright = 1;
@@ -203,28 +195,25 @@ WaterPoloPanel::createPanel() {
         iright = 0;
     }
 
-    layout->addWidget(pTeam[ileft],      0, 0, 2, 6, Qt::AlignHCenter|Qt::AlignVCenter);
-    layout->addWidget(pTeam[iright],     0, 6, 2, 6, Qt::AlignHCenter|Qt::AlignVCenter);
+    layout->addWidget(pTeam[ileft],      0, 0, 1, 6, Qt::AlignHCenter|Qt::AlignVCenter);
+    layout->addWidget(pTeam[iright],     0, 6, 1, 6, Qt::AlignHCenter|Qt::AlignVCenter);
 
-    layout->addWidget(pScore[ileft],     2, 1, 4, 3, Qt::AlignHCenter|Qt::AlignVCenter);
-    layout->addWidget(pPeriodLabel,      2, 4, 1, 4, Qt::AlignHCenter|Qt::AlignVCenter);
-    layout->addWidget(pScore[iright],    2, 8, 4, 3, Qt::AlignHCenter|Qt::AlignVCenter);
+    layout->addWidget(pScore[ileft],     1, 1, 3, 3, Qt::AlignHCenter|Qt::AlignVCenter);
+    layout->addWidget(pPeriodLabel,      1, 4, 1, 4, Qt::AlignHCenter|Qt::AlignBottom);
+    layout->addWidget(pScore[iright],    1, 8, 3, 3, Qt::AlignHCenter|Qt::AlignVCenter);
 
-    layout->addWidget(logoLabel[ileft],  6, 0, 4, 4, Qt::AlignHCenter|Qt::AlignVCenter);
-    layout->addWidget(pTimeLabel,        6, 4, 4, 4, Qt::AlignHCenter|Qt::AlignVCenter);
-    layout->addWidget(logoLabel[iright], 6, 8, 4, 4, Qt::AlignHCenter|Qt::AlignVCenter);
+    layout->addWidget(pPeriod,           2, 4, 1, 4,Qt::AlignHCenter|Qt::AlignTop);
 
-    layout->addWidget(pPeriod,           3, 5, 4, 2,Qt::AlignHCenter|Qt::AlignVCenter);
+    layout->addWidget(logoLabel[ileft],  4, 0, 4, 4, Qt::AlignHCenter|Qt::AlignVCenter);
+    layout->addWidget(pTimeLabel,        4, 4, 4, 4, Qt::AlignHCenter|Qt::AlignVCenter);
+    layout->addWidget(logoLabel[iright], 4, 8, 4, 4, Qt::AlignHCenter|Qt::AlignVCenter);
 
-    // layout->addWidget(pSet[ileft],       6, 3, 2, 1, Qt::AlignHCenter|Qt::AlignVCenter);
-    // layout->addWidget(pSetLabel,         6, 4, 2, 4, Qt::AlignHCenter|Qt::AlignVCenter);
-    // layout->addWidget(pSet[iright],      6, 8, 2, 1, Qt::AlignHCenter|Qt::AlignVCenter);
 
-    layout->addWidget(pTimeout[ileft],   10, 3, 2, 1, Qt::AlignHCenter|Qt::AlignVCenter);
-    layout->addWidget(pTimeoutLabel,     10, 4, 2, 4, Qt::AlignHCenter|Qt::AlignVCenter);
-    layout->addWidget(pTimeout[iright],  10, 8, 2, 1, Qt::AlignHCenter|Qt::AlignVCenter);
+    // layout->addWidget(pTimeout[ileft],   10, 3, 2, 1, Qt::AlignHCenter|Qt::AlignVCenter);
+    // layout->addWidget(pTimeoutLabel,     10, 4, 2, 4, Qt::AlignHCenter|Qt::AlignVCenter);
+    // layout->addWidget(pTimeout[iright],  10, 8, 2, 1, Qt::AlignHCenter|Qt::AlignVCenter);
 
-    layout->addWidget(pCopyRight,        11, 6, 1, 6, Qt::AlignRight  |Qt::AlignVCenter);
+    layout->addWidget(pCopyRight,        9, 6, 1, 6, Qt::AlignRight  |Qt::AlignVCenter);
 
     return layout;
 }
@@ -239,7 +228,6 @@ WaterPoloPanel::changeEvent(QEvent *event) {
                    QString("%1  %2")
                    .arg(pSetLabel->text(), pScoreLabel->text()));
 #endif
-        pSetLabel->setText(tr("Set"));
         pScoreLabel->setText(tr("Punti"));
     } else
         QWidget::changeEvent(event);
@@ -251,7 +239,7 @@ WaterPoloPanel::setLogo(int iTeam, QString sFileLogo) {
     if(QFile::exists(sFileLogo)) {
         if(pPixmapLogo[iTeam]) delete pPixmapLogo[iTeam];
         pPixmapLogo[iTeam] =  new QPixmap(sFileLogo);
-        logoLabel[iTeam]->setPixmap(pPixmapLogo[iTeam]->scaled(192, 192, Qt::KeepAspectRatio));
+        logoLabel[iTeam]->setPixmap(pPixmapLogo[iTeam]->scaled(iLogoSize, iLogoSize, Qt::KeepAspectRatio));
     }
 }
 

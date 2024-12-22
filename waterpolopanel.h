@@ -50,10 +50,8 @@ private:
     QLabel*           pTimeLabel;
     QLabel*           pPeriodLabel;
     QLabel*           pPeriod;
-    QLabel*           pSet[2];
-    QLabel*           pSetLabel;
-    QLabel*           pTimeout[2];
-    QLabel*           pTimeoutLabel;
+    // QLabel*           pTimeout[2];
+    // QLabel*           pTimeoutLabel;
     QLabel*           logoLabel[2];
     QLabel*           pCopyRight;
     QPixmap*          pPixmapLogo[2];
@@ -64,11 +62,11 @@ private:
     QLinearGradient   panelGradient;
     QBrush            panelBrush;
     int               iServizio;
-    int               iTimeoutFontSize;
-    int               iSetFontSize;
+    // int               iTimeoutFontSize;
     int               iScoreFontSize;
     int               iTimeFontSize;
     int               iTeamFontSize;
     int               iLabelsFontSize;
+    int               iLogoSize;
     int               maxTeamNameLen;
 };

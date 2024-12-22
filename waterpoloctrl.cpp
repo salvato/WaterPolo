@@ -381,7 +381,7 @@ void
 WaterPoloCtrl::sendAll() {
     for(int i=0; i<2; i++) {
         pWaterPoloPanel->setTeam(i, pTeamName[i]->text());
-        pWaterPoloPanel->setTimeout(i, iTimeout[i]);
+        // pWaterPoloPanel->setTimeout(i, iTimeout[i]);
         pWaterPoloPanel->setScore(i, iScore[i]);
     }
     pWaterPoloPanel->setLogo(0, gsArgs.sTeamLogoFilePath[0]);
@@ -700,7 +700,7 @@ WaterPoloCtrl::onTimeOutIncrement(int iTeam) {
         pTimeoutEdit[iTeam]->setStyleSheet("background-color: rgba(0, 0, 0, 0);color:red; border: none");
     }
     pTimeoutDecrement[iTeam]->setEnabled(true);
-    pWaterPoloPanel->setTimeout(iTeam, iTimeout[iTeam]);
+    // pWaterPoloPanel->setTimeout(iTeam, iTimeout[iTeam]);
     QString sMessage = QString("<timeout%1>%2</timeout%3>")
                            .arg(iTeam,1)
                            .arg(iTimeout[iTeam])
@@ -722,7 +722,7 @@ WaterPoloCtrl::onTimeOutDecrement(int iTeam) {
     }
     pTimeoutEdit[iTeam]->setStyleSheet("background-color: rgba(0, 0, 0, 0);color:yellow; border: none");
     pTimeoutIncrement[iTeam]->setEnabled(true);
-    pWaterPoloPanel->setTimeout(iTeam, iTimeout[iTeam]);
+    // pWaterPoloPanel->setTimeout(iTeam, iTimeout[iTeam]);
     QString sMessage = QString("<timeout%1>%2</timeout%3>")
                            .arg(iTeam,1)
                            .arg(iTimeout[iTeam])
