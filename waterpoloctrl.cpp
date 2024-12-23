@@ -76,7 +76,7 @@ WaterPoloCtrl::WaterPoloCtrl(QFile *myLogFile, QWidget *parent)
 
     setEventHandlers();
     pCountStop->setDisabled(true);
-
+    startTimer.setSingleShot(true);
     startTimer.start(100);
 }
 
@@ -622,7 +622,6 @@ WaterPoloCtrl::setEventHandlers() {
 
 void
 WaterPoloCtrl::onAppStart() {
-    startTimer.stop();
     sendAll();
     updateTimer.start(20);
 }
