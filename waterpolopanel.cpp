@@ -37,13 +37,13 @@ WaterPoloPanel::WaterPoloPanel(QFile *myLogFile, QWidget *parent)
     sFontName = QString("Liberation Sans Bold");
     fontWeight = QFont::Black;
 
-    //Matrice di 9 Righe x X Colonne
+    // Matrice di 9 Righe x 12 Colonne
     QSize panelSize = QGuiApplication::primaryScreen()->geometry().size();
     int iRowSize = panelSize.height()/9;
     iTeamFontSize    = std::min(iRowSize,
                                 int(panelSize.width()/(2.2*maxTeamNameLen)));
     iScoreFontSize   = std::min(3*iRowSize,
-                                int(panelSize.width()/10));
+                                int(panelSize.width()/9));
     iTimeFontSize    = std::min(5*iRowSize,
                                 int(panelSize.width()/6));
     iLabelsFontSize  = iRowSize;
@@ -186,7 +186,7 @@ WaterPoloPanel::createPanelElements() {
 
 QGridLayout*
 WaterPoloPanel::createPanel() {
-    QGridLayout *layout = new QGridLayout(); // 9 Righe x X Colonne
+    QGridLayout *layout = new QGridLayout(); // 9 Righe x 12 Colonne
 
     int ileft  = 0;
     int iright = 1;
@@ -208,12 +208,11 @@ WaterPoloPanel::createPanel() {
     layout->addWidget(pTimeLabel,        4, 4, 4, 4, Qt::AlignHCenter|Qt::AlignVCenter);
     layout->addWidget(logoLabel[iright], 4, 8, 4, 4, Qt::AlignHCenter|Qt::AlignVCenter);
 
-
     // layout->addWidget(pTimeout[ileft],   10, 3, 2, 1, Qt::AlignHCenter|Qt::AlignVCenter);
     // layout->addWidget(pTimeoutLabel,     10, 4, 2, 4, Qt::AlignHCenter|Qt::AlignVCenter);
     // layout->addWidget(pTimeout[iright],  10, 8, 2, 1, Qt::AlignHCenter|Qt::AlignVCenter);
 
-    layout->addWidget(pCopyRight,        9, 6, 1, 6, Qt::AlignRight  |Qt::AlignVCenter);
+    layout->addWidget(pCopyRight,        8, 6, 1, 6, Qt::AlignRight|Qt::AlignVCenter);
 
     return layout;
 }
