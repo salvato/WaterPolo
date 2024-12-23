@@ -32,5 +32,7 @@
         <file>buttonIcons/Go.png</file>
         <file>Logo_SSD_UniMe.png</file>
         <file>Logo_UniMe.png</file>
+        <file>buttonIcons/StopTime.png</file>
+        <file>buttonIcons/NewGameWaterpolo.png</file>
     </qresource>
 </RCC>
