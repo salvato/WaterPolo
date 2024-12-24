@@ -460,16 +460,18 @@ SlideWidget::paintGL() {
     glClearDepth(5.0);
 
     if(pTexture0 && pTexture1) {
-        pCurrentProgram->setUniformValue(iTex0Loc, 0);
-        pCurrentProgram->setUniformValue(iTex1Loc, 1);
         pTexture0->bind(0);
         pTexture1->bind(1);
+        pCurrentProgram->setUniformValue(iTex0Loc, 0);
+        pCurrentProgram->setUniformValue(iTex1Loc, 1);
         pCurrentProgram->setUniformValue(iProgressLoc, progress);
         matrix.setToIdentity();
         matrix.translate(0.0f, 0.0f, -viewingDistance);
         // Set modelview-projection matrix
         pCurrentProgram->setUniformValue("mvp_matrix", projection * matrix);
         drawGeometry(pCurrentProgram);
+        pTexture0->release();
+        pTexture1->release();
     }
     glDisable(GL_DEPTH_TEST);
 }
