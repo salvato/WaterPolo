@@ -649,6 +649,7 @@ WaterPoloCtrl::onGameTimeChanging() {
                                              .arg(minutes, 1)
                                              .arg(seconds, 2, 10, QChar('0'));
                 pTimeEdit->setText(sRemainingTime);
+                pCountStart->setEnabled(true);
             }
         }
     }

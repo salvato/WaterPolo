@@ -57,6 +57,7 @@ Edit::sizeHint() const
 
 void
 Edit::mousePressEvent(QMouseEvent *e) {
+    Q_UNUSED(e)
     emit mousePressed();
 }
 
