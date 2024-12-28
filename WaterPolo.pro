@@ -33,6 +33,7 @@ SOURCES += \
     generalsetuparguments.cpp \
     generalsetupdialog.cpp \
     main.cpp \
+    remainingtimedialog.cpp \
     scorecontroller.cpp \
     scorepanel.cpp \
     slidewidget.cpp \
@@ -47,6 +48,7 @@ HEADERS += \
     edit.h \
     generalsetuparguments.h \
     generalsetupdialog.h \
+    remainingtimedialog.h \
     scorecontroller.h \
     scorepanel.h \
     slidewidget.h \

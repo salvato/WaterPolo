@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #pragma once
 
 #include "qwidget.h"
+#include "remainingtimedialog.h"
 #include "scorecontroller.h"
 #include "panelorientation.h"
 
@@ -60,6 +61,7 @@ protected:
 
 private slots:
     void onAppStart();
+    void onGameTimeChanging();
     void onTimeUpdate();
     void closeEvent(QCloseEvent*);
     void onPeriodIncrement(int);
@@ -89,6 +91,7 @@ private:
 
 private:
     WaterPoloPanel* pWaterPoloPanel;
+    RemainingTimeDialog RemainingTimeDialog;
     int             iTimeout[2]{};
     int             iScore[2]{};
     int             iPeriod;

@@ -55,7 +55,6 @@ protected:
     void setTeam0Path();
     void setTeam1Path();
 
-
 private:
     QPalette    panelPalette;
     QGradient   panelGradient;

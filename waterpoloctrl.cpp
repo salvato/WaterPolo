@@ -568,7 +568,7 @@ WaterPoloCtrl::buildControls() {
     pTimeEdit->setAlignment(Qt::AlignHCenter|Qt::AlignVCenter);
     pTimeEdit->setMaxLength(4);
     pTimeEdit->setPalette(pal);
-    pTimeEdit->setReadOnly(true);
+    //>>>>>>>>>>>>>>>pTimeEdit->setReadOnly(true);
 
     // Score
     pScoreLabel = new QLabel(tr("Punti"));
@@ -604,6 +604,9 @@ WaterPoloCtrl::setEventHandlers() {
             this, SLOT(onCountStart(int)));
     connect(pCountStop, SIGNAL(buttonClicked(int)),
             this, SLOT(onCountStop(int)));
+    // Time editing
+    connect(pTimeEdit, SIGNAL(mousePressed()),
+            this, SLOT(onGameTimeChanging()));
     // New Period
     connect(pNewPeriodButton, SIGNAL(clicked(bool)),
             this, SLOT(onButtonNewPeriodClicked()));
@@ -624,6 +627,23 @@ void
 WaterPoloCtrl::onAppStart() {
     sendAll();
     updateTimer.start(20);
+}
+
+
+void
+WaterPoloCtrl::onGameTimeChanging() {
+    QString sTime = pTimeEdit->text();
+    int minutes = sTime.left(1).toInt();
+    int seconds = sTime.right(2).toInt();
+    RemainingTimeDialog.setMinutes(minutes);
+    RemainingTimeDialog.setSeconds(seconds);
+    if(RemainingTimeDialog.exec() == QDialog::Accepted) {
+        minutes = RemainingTimeDialog.getMinutes();
+        seconds = RemainingTimeDialog.getSeconds();
+// TODO:
+    // Da completare
+    }
+    // Settare il Focus su un altro controllo
 }
 
 

@@ -16,32 +16,40 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *
 */
+
 #pragma once
 
+#include <QDialog>
+#include <QObject>
 #include <QLineEdit>
+#include <QPushButton>
 
-class Edit : public QLineEdit
+
+class
+RemainingTimeDialog : public QDialog
 {
     Q_OBJECT
-
 public:
-    explicit Edit(int iTeam=0, QWidget *parent = nullptr);
-    explicit Edit(const QString &, int iTeam=0, QWidget *parent = nullptr);
-
-public:
-    QSize sizeHint() const Q_DECL_OVERRIDE;
-
-public slots:
-    void onTextChanged(QString sText);
-
-signals:
-    void teamTextChanged(QString sText, int iTeam);
-    void mousePressed();
+    RemainingTimeDialog();
 
 private:
-    void mousePressEvent(QMouseEvent *e) override;
+    QLineEdit   minuteEdit;
+    QLineEdit   secondsEdit;
+    QPushButton buttonOk;
+    QPushButton buttonCancel;
+    QString     sErrorFormat;
+    QString     sCorrectFormat;
 
-protected:
-    int myTeam;
+public slots:
+    void onCancelClicked();
+    void onOkClicked();
+    void onMinuteChanged(QString sText);
+    void onSecondsChanged(QString sText);
+
+public:
+    void setMinutes(int minutes);
+    void setSeconds(int seconds);
+    int getMinutes();
+    int getSeconds();
 };
 

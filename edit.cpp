@@ -56,6 +56,12 @@ Edit::sizeHint() const
 
 
 void
+Edit::mousePressEvent(QMouseEvent *e) {
+    emit mousePressed();
+}
+
+
+void
 Edit::onTextChanged(QString sText) {
     emit teamTextChanged(std::move(sText), myTeam);
 }
