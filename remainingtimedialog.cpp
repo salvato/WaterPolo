@@ -65,7 +65,7 @@ RemainingTimeDialog::onMinuteChanged(QString sText) {
     }
     else {
         minuteEdit.setStyleSheet(sErrorFormat);
-        buttonOk.setEnabled(true);
+        buttonOk.setEnabled(false);
     }
 }
 
@@ -80,7 +80,7 @@ RemainingTimeDialog::onSecondsChanged(QString sText) {
     }
     else {
         secondsEdit.setStyleSheet(sErrorFormat);
-        buttonOk.setEnabled(true);
+        buttonOk.setEnabled(false);
     }
 }
 

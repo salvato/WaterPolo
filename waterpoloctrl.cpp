@@ -134,7 +134,8 @@ WaterPoloCtrl::GeneralSetup() {
         lldiv_t iRes = div(remainingMilliSeconds+999, 60000LL);
         int iMinutes = int(iRes.quot);
         int iSeconds = int(iRes.rem/1000);
-        sRemainingTime = QString("%1:%2").arg(iMinutes, 1)
+        sRemainingTime = QString("%1:%2")
+                             .arg(iMinutes, 1)
                              .arg(iSeconds, 2, 10, QChar('0'));
         pTimeEdit->setText(sRemainingTime);
         SaveSettings();
@@ -562,13 +563,13 @@ WaterPoloCtrl::buildControls() {
     // Time Count
     QString sRemainingTime;
     lldiv_t iRes = div(remainingMilliSeconds, qint64(60000));
-    sRemainingTime = QString("%1:%2").arg(iRes.quot, 1)
+    sRemainingTime = QString("%1:%2")
+                         .arg(iRes.quot, 1)
                          .arg(int(iRes.rem), 2, 10, QChar('0'));
     pTimeEdit = new Edit(sRemainingTime, 0);
     pTimeEdit->setAlignment(Qt::AlignHCenter|Qt::AlignVCenter);
     pTimeEdit->setMaxLength(4);
     pTimeEdit->setPalette(pal);
-    //>>>>>>>>>>>>>>>pTimeEdit->setReadOnly(true);
 
     // Score
     pScoreLabel = new QLabel(tr("Punti"));
@@ -640,9 +641,18 @@ WaterPoloCtrl::onGameTimeChanging() {
     if(RemainingTimeDialog.exec() == QDialog::Accepted) {
         minutes = RemainingTimeDialog.getMinutes();
         seconds = RemainingTimeDialog.getSeconds();
-// TODO:
-    // Da completare
+        qint64 mSecToGo = (minutes*60+seconds)*1000;
+        if(mSecToGo <= gsArgs.iTimeDuration*60000) {
+            runMilliSeconds = gsArgs.iTimeDuration * 60000-mSecToGo;
+            if(runMilliSeconds >= 0) {
+                QString sRemainingTime = QString("%1:%2")
+                                             .arg(minutes, 1)
+                                             .arg(seconds, 2, 10, QChar('0'));
+                pTimeEdit->setText(sRemainingTime);
+            }
+        }
     }
+    pCountStart->setFocus();
     // Settare il Focus su un altro controllo
 }
 
@@ -992,6 +1002,7 @@ WaterPoloCtrl::onButtonNewGameClicked() {
         pTimeoutIncrement[iTeam]->setEnabled(true);
         pScoreDecrement[iTeam]->setEnabled(false);
         pScoreIncrement[iTeam]->setEnabled(true);
+        pCountStart->setEnabled(true);
     }
     iPeriod = 1;
     pPeriodEdit->setText(QString("%1").arg(iPeriod));
