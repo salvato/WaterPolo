@@ -13,7 +13,7 @@
 - I nomi delle squadre (inizialmente  e  possono essere cambiati per riflettere i nomi delle varie squadre che si affrontano. Basta posizionare il mouse sul nome della squadra da modificare, _“cliccare”_ e scrivere il nuovo nome.
 - I tasti  e  fanno, rispettivamente, partire e arrestare il conteggio del tempo effettivo di gioco.
 - In caso di un errore nel cronometraggio, è possibile variare il tempo di gioco rimasto. A **_“tempo fermo”_** cliccando con il mouse sul conteggio dei secondi, comparirà il seguente dialogo con il quale è possibile specificare il nuovo tempo di gioco rimasto:
-- La modifica del punteggio e dei timeout (tramite i tasti  e )è consentita solo a **_“tempo fermo”__*.
+- La modifica del punteggio e dei timeout (tramite i tasti  e )è consentita solo a **_“tempo fermo”_**.
 - Al termine di un periodo di gioco (il timer segna 0:00) è possibile iniziarne uno nuovo attraverso la pressione del tasto . Anche in questo caso un _“dialogo”_ chiederà conferma della volontà di iniziare un nuovo periodo. Secondo regolamento all’inizio del terzo periodo la posizione delle squadre sullo schermo sarà cambiata per riflettere la posizione delle squadre in campo.
 - Il Tasto  serve a scambiare le posizioni delle squadre in caso di un errore in fase iniziale.
 - I tasti  e  servono per mostrare filmati (il primo) e immagini (il secondo) ma considerato il poco tempo disponibile non ne garantisco il funzionamento pertanto eviterei di utilizzarli per ora se non per provare a vedere se funzionano !!!).
