@@ -7,9 +7,10 @@
 e NON come **_“Duplicazione”_** dello schermo principale.
 - Sul Pen Drive è presente una _Cartella_ ![](/Images/Cartella.png)
 che contiene il programma da eseguire.
-- Il programma da eseguire si chiama **_Waterpolo.exe_**: .
+- Il programma da eseguire si chiama **_Waterpolo.exe_**: ![](/Images/Eseguibile.png).
 - Una volta aperto il programma sullo schermo principale del computer appare il 
-**_“Controller_**” cioè la _“centralina di comando”_ del programma stesso:
+**_“Controller_**” cioè la _“centralina di comando”_ del programma stesso: 
+![](/Images/Controller.png)
 - Sullo schermo secondario (quello connesso tramite cavo HDMI) compare invece il
 **_“Tabellone”_** che mostra all’Arbitro e al Pubblico la situazione corrente dell’incontro
 (lo schermo deve essere il più grande e luminoso possibile, in caso agire sui comandi di 
