@@ -70,6 +70,22 @@ RESOURCES += \
 
 DISTFILES += \
     .gitignore \
+    Images/Cartella.png \
+    Images/Controller.png \
+    Images/Eseguibile.png \
+    Images/Exchange.png \
+    Images/Go.png \
+    Images/Minus.png \
+    Images/NewGame.png \
+    Images/NewPeriod.png \
+    Images/NewTime.png \
+    Images/Plus.png \
+    Images/Setup.png \
+    Images/SetupDialog.png \
+    Images/Slide.png \
+    Images/Spot.png \
+    Images/Stop.png \
+    Images/Tabellone.png \
     Logo_UniMe2.png \
     Note.txt \
     README.md \
