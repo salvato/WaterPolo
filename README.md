@@ -3,7 +3,8 @@
 ## Brevi istruzioni per il funzionamento del programma
 
 - Occorre connettere uno schermo (Anche un TV) al computer tramite un cavo HDMI
-- Occorre fare in modo che il secondo schemo sia configurato come **_“Estensione”_** dello schermo del computer e NON come **_“Duplicazione”_** dello schermo principale.
+- Il secondo schemo deve essere configurato come **_“Estensione”_** dello schermo del computer 
+e NON come **_“Duplicazione”_** dello schermo principale.
 - Sul Pen Drive è presente una _Cartella_ che contiene il programma da eseguire.
 - Il programma da eseguire si chiama **_Waterpolo.exe_**: .
 - Una volta aperto il programma sullo schermo principale del computer appare il **_“Controller_**” cioè la _“centralina di comando”_ del programma stesso:
