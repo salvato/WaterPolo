@@ -57,8 +57,8 @@ RemainingTimeDialog::onOkClicked() {
 
 void
 RemainingTimeDialog::onMinuteChanged(QString sText) {
-    if((minuteEdit.text().toInt() >= 0) &&
-       (minuteEdit.text().toInt() < 9))
+    if((sText.toInt() >= 0) &&
+       (sText.toInt() < 9))
     {
         minuteEdit.setStyleSheet(sCorrectFormat);
         buttonOk.setEnabled(true);
@@ -72,8 +72,8 @@ RemainingTimeDialog::onMinuteChanged(QString sText) {
 
 void
 RemainingTimeDialog::onSecondsChanged(QString sText) {
-    if((secondsEdit.text().toInt() >= 0) &&
-        (secondsEdit.text().toInt() < 60))
+    if((sText.toInt() >= 0) &&
+       (sText.toInt() < 60))
     {
         secondsEdit.setStyleSheet(sCorrectFormat);
         buttonOk.setEnabled(true);
