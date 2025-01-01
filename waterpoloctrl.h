@@ -91,7 +91,7 @@ private:
 
 private:
     WaterPoloPanel* pWaterPoloPanel;
-    RemainingTimeDialog RemainingTimeDialog;
+    RemainingTimeDialog* pRemainingTimeDialog;
     int             iTimeout[2]{};
     int             iScore[2]{};
     int             iPeriod;

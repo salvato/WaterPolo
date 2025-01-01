@@ -40,6 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 WaterPoloCtrl::WaterPoloCtrl(QFile *myLogFile, QWidget *parent)
     : ScoreController(myLogFile, parent)
     , pWaterPoloPanel(new WaterPoloPanel(myLogFile))
+    , pRemainingTimeDialog(new RemainingTimeDialog)
     , iPeriod(1)
     , bFontBuilt(false)
     , maxTeamNameLen(15)
@@ -636,11 +637,11 @@ WaterPoloCtrl::onGameTimeChanging() {
     QString sTime = pTimeEdit->text();
     int minutes = sTime.left(1).toInt();
     int seconds = sTime.right(2).toInt();
-    RemainingTimeDialog.setMinutes(minutes);
-    RemainingTimeDialog.setSeconds(seconds);
-    if(RemainingTimeDialog.exec() == QDialog::Accepted) {
-        minutes = RemainingTimeDialog.getMinutes();
-        seconds = RemainingTimeDialog.getSeconds();
+    pRemainingTimeDialog->setMinutes(minutes);
+    pRemainingTimeDialog->setSeconds(seconds);
+    if(pRemainingTimeDialog->exec() == QDialog::Accepted) {
+        minutes = pRemainingTimeDialog->getMinutes();
+        seconds = pRemainingTimeDialog->getSeconds();
         qint64 mSecToGo = (minutes*60+seconds)*1000;
         if(mSecToGo <= gsArgs.iTimeDuration*60000) {
             runMilliSeconds = gsArgs.iTimeDuration * 60000-mSecToGo;
