@@ -23,7 +23,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QMouseEvent>
 #include <QDir>
-#include <cmath>
 #include <QApplication>
 #include <QPainter>
 #include <QStandardPaths>
@@ -57,14 +56,6 @@ SlideWidget::SlideWidget()
     pBaseImage = new QImage(screenres.width(),
                             screenres.height(),
                             QImage::Format_RGBA8888_Premultiplied);
-    // Reset projection matrix
-    projection.setToIdentity();
-    viewingDistance       = 20.0f;
-    aspectRatio           = GLfloat(screenres.width())/GLfloat(screenres.height());
-    GLfloat verticalAngle = 2.0*atan(1.0/viewingDistance)*180.0/M_PI;
-    GLfloat nearPlane     = viewingDistance - 1.0;
-    GLfloat farPlane      = viewingDistance + 1.0;
-    projection.perspective(verticalAngle, aspectRatio, nearPlane, farPlane);
 
     iCurrentSlide    = 0;
 
@@ -432,13 +423,13 @@ SlideWidget::initGeometry() {
             ydy = y + dy;
             if(ydy >= 1.0f) ydy = 1.0f;
             yT = y + 1.0;
-            vertices.append({QVector3D(x*aspectRatio,   y,   0.0f),
+            vertices.append({QVector3D(x,   y,        0.0f),
                              QVector2D(0.5*xT,        0.5*yT)});
-            vertices.append({QVector3D(xdx*aspectRatio, y,   0.0f),
+            vertices.append({QVector3D(xdx, y,        0.0f),
                              QVector2D(0.5*(xdx+1.0), 0.5*yT)});
-            vertices.append({QVector3D(x*aspectRatio,   ydy, 0.0f),
+            vertices.append({QVector3D(x,   ydy,      0.0f),
                              QVector2D(0.5*xT,        0.5*(ydy+1.0))});
-            vertices.append({QVector3D(xdx*aspectRatio, ydy, 0.0f),
+            vertices.append({QVector3D(xdx, ydy,      0.0f),
                              QVector2D(0.5*(xdx+1.0), 0.5*(ydy+1.0))});
             y = ydy;
         }
@@ -457,7 +448,6 @@ SlideWidget::paintGL() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
-    glClearDepth(5.0);
 
     if(pTexture0 && pTexture1) {
         pTexture0->bind(0);
@@ -465,10 +455,12 @@ SlideWidget::paintGL() {
         pCurrentProgram->setUniformValue(iTex0Loc, 0);
         pCurrentProgram->setUniformValue(iTex1Loc, 1);
         pCurrentProgram->setUniformValue(iProgressLoc, progress);
-        matrix.setToIdentity();
-        matrix.translate(0.0f, 0.0f, -viewingDistance);
-        // Set modelview-projection matrix
-        pCurrentProgram->setUniformValue("mvp_matrix", projection * matrix);
+
+        QMatrix4x4 m;
+        m.ortho(-1.0f, +1.0f, -1.0f, 1.0f, 4.0f, 15.0f);
+        m.translate(0.0f, 0.0f, -10.0);
+        pCurrentProgram->setUniformValue("mvp_matrix", m);
+
         drawGeometry(pCurrentProgram);
         pTexture0->release();
         pTexture1->release();
