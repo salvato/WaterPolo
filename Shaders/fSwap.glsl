@@ -14,7 +14,7 @@ const vec2 boundMax = vec2(1.0, 1.0);
 uniform sampler2D texture0;
 uniform sampler2D texture1;
 uniform float progress;
-varying vec2 v_texcoord;
+varying vec4 v_texcoord;
 
 
 vec4
@@ -83,5 +83,5 @@ vec4 transition(vec2 p) {
 
 void
 main(void) {
-    gl_FragColor = transition(v_texcoord);
+    gl_FragColor = transition(v_texcoord.st);
 }

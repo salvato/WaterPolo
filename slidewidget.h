@@ -91,7 +91,7 @@ private:
     int currentAnimation;
     GLint     iTex0Loc;
     GLint     iTex1Loc;
-    QMatrix4x4 matrix;
+    QMatrix4x4 m;
     GLint     iProgressLoc;
     GLfloat   progress;
     QScreen*  pMyScreen;

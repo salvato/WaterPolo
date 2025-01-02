@@ -57,6 +57,9 @@ SlideWidget::SlideWidget()
                             screenres.height(),
                             QImage::Format_RGBA8888_Premultiplied);
 
+    m.ortho(-1.0f, +1.0f, -1.0f, 1.0f, 4.0f, 15.0f);
+    m.translate(0.0f, 0.0f, -10.0);
+
     iCurrentSlide    = 0;
 
     timerSteady.setSingleShot(true);
@@ -214,11 +217,6 @@ SlideWidget::prepareNextRound() {
     currentAnimation = rand() % nAnimationTypes;
     pCurrentProgram->release();
     pCurrentProgram = pPrograms.at(currentAnimation);
-    if(!pCurrentProgram->bind()) {
-        qCritical() << __FUNCTION__ << __LINE__;
-        close();
-        return false;
-    }
     getLocations();
 
     // Prepare the next slide...
@@ -336,7 +334,8 @@ SlideWidget::initializeGL() {
 
 void
 SlideWidget::initShaders() {
-    QStringList fShaderList = QStringList({"fBookFlip",
+    QStringList fShaderList = QStringList({
+                                          "fBookFlip",
                                           "fAngular",
                                           "fBounce",
                                           "fFilmBurn",
@@ -361,7 +360,8 @@ SlideWidget::initShaders() {
                                           "fPixelize",
                                           "fWind",
                                           "fSwap",
-                                          "fCrosswarp"});
+                                          "fCrosswarp"
+    });
     for(int i=0; i<fShaderList.count(); i++) {
         QOpenGLShaderProgram* pNewProgram = new QOpenGLShaderProgram(this);
         if (!pNewProgram->addShaderFromSourceFile(QOpenGLShader::Vertex, ":/Shaders/vShader.glsl")) {
@@ -370,10 +370,12 @@ SlideWidget::initShaders() {
         }
         QString sFshader = QString(":/Shaders/%1.glsl").arg(fShaderList.at(i));
         if (!pNewProgram->addShaderFromSourceFile(QOpenGLShader::Fragment, sFshader)) {
+            qDebug() << sFshader;
             close();
             return;
         }
         if (!pNewProgram->link()) {
+            qDebug() << sFshader;
             close();
             return;
         }
@@ -452,13 +454,10 @@ SlideWidget::paintGL() {
     if(pTexture0 && pTexture1) {
         pTexture0->bind(0);
         pTexture1->bind(1);
+        pCurrentProgram->bind();
         pCurrentProgram->setUniformValue(iTex0Loc, 0);
         pCurrentProgram->setUniformValue(iTex1Loc, 1);
         pCurrentProgram->setUniformValue(iProgressLoc, progress);
-
-        QMatrix4x4 m;
-        m.ortho(-1.0f, +1.0f, -1.0f, 1.0f, 4.0f, 15.0f);
-        m.translate(0.0f, 0.0f, -10.0);
         pCurrentProgram->setUniformValue("mvp_matrix", m);
 
         drawGeometry(pCurrentProgram);

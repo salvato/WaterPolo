@@ -1,9 +1,7 @@
-#version 330 core
-
 uniform sampler2D texture0;
 uniform sampler2D texture1;
 uniform float progress;
-varying vec2 v_texcoord;
+varying vec4 v_texcoord;
 
 
 vec4

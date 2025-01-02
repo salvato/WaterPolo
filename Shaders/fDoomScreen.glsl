@@ -6,7 +6,7 @@
 uniform sampler2D texture0;
 uniform sampler2D texture1;
 uniform float progress;
-varying vec2 v_texcoord;
+varying vec4 v_texcoord;
 
 
 vec4
@@ -83,6 +83,6 @@ vec4 transition(vec2 uv) {
 
 void
 main(void) {
-    gl_FragColor = transition(v_texcoord);
+    gl_FragColor = transition(v_texcoord.st);
 }
 
