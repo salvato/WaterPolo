@@ -950,20 +950,15 @@ WaterPoloCtrl::startNewPeriod() {
         sText = gsArgs.sTeamLogoFilePath[0];
         gsArgs.sTeamLogoFilePath[0] = gsArgs.sTeamLogoFilePath[1];
         gsArgs.sTeamLogoFilePath[1] = sText;
+    }
 
-        for(int iTeam=0; iTeam<2; iTeam++) {
-            iTimeout[iTeam] = 0;
-            sText = QString("%1").arg(iTimeout[iTeam], 1);
-            pTimeoutEdit[iTeam]->setText(sText);
-            pTimeoutEdit[iTeam]->setStyleSheet("background-color: rgba(0, 0, 0, 0);color:yellow; border: none");
-            iScore[iTeam]   = 0;
-            sText = QString("%1").arg(iScore[iTeam], 2);
-            pScoreEdit[iTeam]->setText(sText);
-            pTimeoutDecrement[iTeam]->setEnabled(false);
-            pTimeoutIncrement[iTeam]->setEnabled(true);
-            pScoreDecrement[iTeam]->setEnabled(false);
-            pScoreIncrement[iTeam]->setEnabled(true);
-        }
+    for(int iTeam=0; iTeam<2; iTeam++) {
+        iTimeout[iTeam] = 0;
+        sText = QString("%1").arg(iTimeout[iTeam], 1);
+        pTimeoutEdit[iTeam]->setText(sText);
+        pTimeoutEdit[iTeam]->setStyleSheet("background-color: rgba(0, 0, 0, 0);color:yellow; border: none");
+        pTimeoutDecrement[iTeam]->setEnabled(false);
+        pTimeoutIncrement[iTeam]->setEnabled(true);
     }
     remainingMilliSeconds = gsArgs.iTimeDuration * 60000;
     runMilliSeconds = 0;
