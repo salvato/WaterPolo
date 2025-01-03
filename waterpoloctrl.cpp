@@ -361,8 +361,12 @@ WaterPoloCtrl::enableUi() {
         pTeamName[i]->setEnabled(true);
         pTimeoutEdit[i]->setEnabled(true);
         pScoreEdit[i]->setEnabled(true);
-        pTimeoutIncrement[i]->setEnabled(true);
-        pTimeoutDecrement[i]->setEnabled(true);
+        if(iTimeout[i] < gsArgs.maxTimeout) {
+            pTimeoutIncrement[i]->setEnabled(true);
+        }
+        if(iTimeout[i] > 0) {
+            pTimeoutDecrement[i]->setEnabled(true);
+        }
         pScoreIncrement[i]->setEnabled(true);
         pScoreDecrement[i]->setEnabled(true);
     }
